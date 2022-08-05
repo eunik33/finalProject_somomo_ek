@@ -265,7 +265,7 @@
 										<td>${f.nickname}</td>
 										<td align="right">버튼</td>
 									</tr>
-									<tr><td class="fd-board-date">5시간 전</td></tr>
+									<tr><td class="fd-board-date">${f.boardDate}</td></tr>
 								</table>
 								<!------- 내용  -------->
 								<div class="fd-board-contents fdm">
@@ -278,8 +278,8 @@
 								<div class="fd-board-bottom fdm">
 									<table style="width:100%">
 										<tr>
-											<td>댓글 ${f.countReply}개
-											<td align="right"><img class="likeBtn" src="resources/img/heart-off.png"></td></td></tr>
+											<td>댓글 ${f.countReply}개</td>
+											<td align="right"><img class="likeBtn" src="resources/img/heart-off.png"></td></tr>
 									</table>
 								</div>
 			           		</div>
@@ -296,7 +296,7 @@
 										<td>${f.nickname}</td>
 										<td align="right">버튼</td>
 									</tr>
-									<tr><td class="fd-board-date">5시간 전</td></tr>
+									<tr><td class="fd-board-date">${f.boardDate}</td></tr>
 								</table>
 								<div class="fd-board-contents fdm">
 									<div class="title">

@@ -2,7 +2,7 @@ package com.kh.somomo.feed.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.template.Pagination;
+import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
 import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
@@ -32,11 +33,12 @@ public class FeedController {
 	private FeedService feedService;
 	
 	@RequestMapping("list.fd")
-	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage, ModelAndView mv) {
+	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage, ModelAndView mv) throws ParseException {
 		
 		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5);
 		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi);
 		for(FeedBoard fb : fList) {
+			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate()));
 			if(fb.getBoardType().equals("M")) {
 				setMeetCondition(fb);
 			}
@@ -52,7 +54,7 @@ public class FeedController {
 	// 모집조건 텍스트 설정 (모집성별 + 모집나이)
 	public void setMeetCondition(FeedBoard fb) {
 		
-		String condition = "";
+		String condition = null;
 		
 		if(fb.getMeetAge().equals("A") && fb.getMeetGender().equals("A")) {
 			fb.setMeetCondition("누구나 참여 가능");
@@ -67,7 +69,6 @@ public class FeedController {
 		else condition += "남성만";
 		
 		fb.setMeetCondition(condition);
-		
 	}
 	
 	@RequestMapping("insert.fd")
@@ -158,6 +159,5 @@ public class FeedController {
 		}
 		
 		return mv;
-
 	}
 }
