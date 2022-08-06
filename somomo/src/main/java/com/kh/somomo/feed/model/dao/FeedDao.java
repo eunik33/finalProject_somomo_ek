@@ -71,6 +71,10 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectMeetBoard", boardNo);
 	}
 
+	public int deleteFeedBoard(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.update("feedMapper.deleteFeedBoard", boardNo);
+	}
+
 
 
 

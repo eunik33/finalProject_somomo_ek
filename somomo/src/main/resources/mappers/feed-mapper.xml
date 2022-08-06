@@ -298,4 +298,13 @@
 		   AND 
 		       F.STATUS = 'Y'
 	</select>
+	
+	<update id="deleteFeedBoard" parameterType="_int">
+		UPDATE 
+		       FEED_BOARD
+		   SET 
+		       STATUS = 'N'
+		 WHERE 
+		       BOARD_NO = #{boardNo}
+	</update>
 </mapper>

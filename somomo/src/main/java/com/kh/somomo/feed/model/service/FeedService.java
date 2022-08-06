@@ -6,6 +6,7 @@ import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.model.vo.RegionCategory;
 import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
+import com.kh.somomo.feed.model.vo.FeedReply;
 
 public interface FeedService {
 
@@ -37,11 +38,24 @@ public interface FeedService {
 	// 모임모집글 조회
 	FeedBoard selectMeetBoard(int boardNo);
 	
-	// 게시글 수정
+	// 게시글 수정 서비스
+	// 게시글 내용 수정
 	int updateFeedBoard(FeedBoard fb);
-	
+	// 새 첨부파일 추가
+	int insertNewFeedAttachment(ArrayList<FeedAttachment> fatList);
+	// 기존 첨부파일 삭제
+	int deleteFeedAttachment(ArrayList<FeedAttachment> fatList);
+
 	// 게시글 삭제
 	int deleteFeedBoard(int boardNo);
 
-
+	// 댓글 서비스
+	// 댓글 목록 조회
+	ArrayList<FeedReply> selectReplyList(int boardNo);
+	// 댓글 작성
+	int insertReply(FeedReply reply);
+	// 댓글 수정
+	int updateReply(FeedReply reply);
+	// 댓글 삭제
+	int deleteReply(int replyNo);
 }

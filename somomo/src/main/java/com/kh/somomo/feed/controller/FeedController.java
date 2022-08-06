@@ -35,7 +35,7 @@ public class FeedController {
 	@RequestMapping("list.fd")
 	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage, ModelAndView mv) throws ParseException {
 		
-		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5);
+		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 2);
 		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi);
 		for(FeedBoard fb : fList) {
 			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate()));
@@ -159,5 +159,19 @@ public class FeedController {
 		}
 		
 		return mv;
+	}
+	
+	@RequestMapping("delete.fb")
+	public String deleteFeedBoard(int bno, HttpSession session, Model model) {
+		
+		int result = feedService.deleteFeedBoard(bno);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", "게시글 삭제 성공");
+			return "redirect:list.fd";
+		} else {
+			model.addAttribute("errorMsg", "게시글 삭제 실패");
+			return "common/errorPage";
+		}
 	}
 }

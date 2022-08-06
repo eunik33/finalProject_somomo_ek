@@ -11,6 +11,7 @@ import com.kh.somomo.common.model.vo.RegionCategory;
 import com.kh.somomo.feed.model.dao.FeedDao;
 import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
+import com.kh.somomo.feed.model.vo.FeedReply;
 
 @Service
 public class FeedServiceImpl implements FeedService{
@@ -90,6 +91,36 @@ public class FeedServiceImpl implements FeedService{
 
 	@Override
 	public int deleteFeedBoard(int boardNo) {
+		return feedDao.deleteFeedBoard(sqlSession, boardNo);
+	}
+
+	@Override
+	public int insertNewFeedAttachment(ArrayList<FeedAttachment> fatList) {
+		return 0;
+	}
+
+	@Override
+	public int deleteFeedAttachment(ArrayList<FeedAttachment> fatList) {
+		return 0;
+	}
+
+	@Override
+	public ArrayList<FeedReply> selectReplyList(int boardNo) {
+		return null;
+	}
+
+	@Override
+	public int insertReply(FeedReply reply) {
+		return 0;
+	}
+
+	@Override
+	public int updateReply(FeedReply reply) {
+		return 0;
+	}
+
+	@Override
+	public int deleteReply(int replyNo) {
 		return 0;
 	}
 
