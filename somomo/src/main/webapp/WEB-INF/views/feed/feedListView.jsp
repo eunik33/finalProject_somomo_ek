@@ -208,162 +208,41 @@
            	</div>
 			<!-----------글 목록 띄워지는 공간----------->
            	<div class="fd-board-area">
-           			
-				<!------------글 예시 (모임모집)--------------->
-           		<div class="fd-board">
-					<!------- 상단 태그  -------->
-           			<div class="fd-board-top">
-						<a href="#" class="btnBoardTypeM">모임모집</a>&nbsp;<a href="#" class="btnRegionNo">경기도</a>
-           			</div>
-					<!------- 작성자 프로필, 날짜, 수정/삭제버튼  -------->
-	        		<table class="fd-board-writer-date">
-						<tr>
-							<td rowspan="2" class="profileImg-area"><img class="profileImg" src="resources/img/test1.jpg"></td>
-							<td>닉네임표시</td>
-							<td align="right">
-								<div class="dropdown">
-									<i class='bx bx-dots-vertical-rounded dropdown-toggle' data-toggle="dropdown">
-										<div class="dropdown-menu">
-										    <a class="dropdown-item" href="#">수정</a>
-										    <a class="dropdown-item" href="#">삭제</a>
-										    <a class="dropdown-item" href="#">신고(미정)</a>
-									  	</div>
-								   	</i>
-								</div>
-							</td>
-						</tr>
-						<tr><td class="fd-board-date">5시간 전</td></tr>
-					</table>
-					<!------- 내용  -------->
-					<div class="fdm fd-board-contents">
-						<div class="title"><b>모집중&nbsp;</b>1동탄에서 보드게임 하실 분 모집합니다!</div>
-						<div class="fdm meet-info">
-							👉보드게임카페 | 2022-08-08 15:00<br>
-							👉누구나 참여 가능<br>
-							👉1/4명 참여
-						</div>
-						<div class="fdm content">
-							<p>안녕하세요 보드게임 하실 분 모집합니다! 날짜는 어쩌고저쩌고 조율가능합니다~~~
-								최대 2줄만 보이게...???
-							</p>
-						</div>
-					</div>
-					<!------- 하단 찜버튼  -------->
-					<div class="fd-board-bottom">
-						<div align="right"><img class="likeBtn" src="resources/img/star-off.png"></div>
-					</div>
-				</div>
-           	
 
-           		<c:forEach var="f" items="${fList}">
-           			<c:choose>
-           				<c:when test="${f.boardType eq 'G'}">
-							<!-----------일반게시글-------------->
-						    <div class="fd-board">
-						    <input type="hidden" name="boardNo" value="${f.boardNo}">
-			           			<!------- 상단 태그  -------->
-			           			<div class="fd-board-top">
-			           				<a href="#" class="btnBoardTypeG">일반글</a>&nbsp;<a href="#" class="btnRegionNo">${f.regionName}</a>
-			           			</div>
-			           			<!------- 작성자 프로필, 날짜, 수정/삭제버튼  -------->
-				        		<table class="fd-board-writer-date">
-									<tr>
-										<td rowspan="2" class="profileImg-area"><img class="profileImg" src="resources/img/test1.jpg" style="width:100%;"></td>
-										<td>${f.nickname}</td>
-										<td align="right">
-											<div class="dropdown">
-												<i class='bx bx-dots-vertical-rounded dropdown-toggle' data-toggle="dropdown">
-													<div class="dropdown-menu">
-													    <a class="dropdown-item" href="#">수정</a>
-													    <a class="dropdown-item checkDelete">삭제</a>
-													    <a class="dropdown-item" href="#">신고(미정)</a>
-												  	</div>
-											   	</i>
-											</div>
-										</td>
-									</tr>
-									<tr><td class="fd-board-date">${f.boardDate}</td></tr>
-								</table>
-								<!------- 내용  -------->
-								<div class="fd-board-contents fdm">
-									<div class="title">${f.boardTitle}</div>
-									<div class="content fdm">
-										<p>${f.boardContent}</p>
-									</div>
-								</div>
-								<!------- 하단 댓글,좋아요버튼  -------->
-								<div class="fd-board-bottom fdm">
-									<table style="width:100%">
-										<tr>
-											<td>댓글 ${f.countReply}개</td>
-											<td align="right"><img class="likeBtn" src="resources/img/heart-off.png"></td></tr>
-									</table>
-								</div>
-			           		</div>
-           				</c:when>
-           				<c:otherwise>
-			           		<div class="fd-board">
-			           			<input type="hidden" name="boardNo" value="${f.boardNo}">
-			           			<div class="fd-board-top">
-			           				<a href="#" class="btnBoardTypeM">모임모집</a>&nbsp;<a href="#" class="btnRegionNo">${f.regionName}</a>
-			           			</div>
-				        		<table class="fd-board-writer-date">
-									<tr>
-										<td rowspan="2" class="profileImg-area"><img class="profileImg" src="resources/img/test1.jpg" style="width:100%;"></td>
-										<td>${f.nickname}</td>
-										<td align="right">
-											<div class="dropdown">
-												<i class='bx bx-dots-vertical-rounded dropdown-toggle' data-toggle="dropdown">
-													<div class="dropdown-menu">
-													    <a class="dropdown-item" href="#">수정</a>
-													    <a class="dropdown-item checkDelete">삭제</a>
-													    <a class="dropdown-item" href="#">신고(미정)</a>
-												  	</div>
-											   	</i>
-											</div>
-										</td>
-									</tr>
-									<tr><td class="fd-board-date">${f.boardDate}</td></tr>
-								</table>
-								<div class="fd-board-contents fdm">
-									<div class="title">
-										<c:choose>
-											<c:when test="${f.countMember lt f.meetTotal}">
-												<b>모집중&nbsp;</b>
-											</c:when>
-											<c:otherwise>
-												<b>모집마감&nbsp;</b>
-											</c:otherwise>
-										</c:choose>
-										${f.boardTitle}
-									</div>
-									<div class="meet-info fdm">
-										👉${f.meetPlace} | ${f.meetDate}<br>
-										👉${f.meetCondition}<br>
-										👉${f.countMember}/${f.meetTotal}명 참여
-									</div>
-									<div class="content fdm">
-										<p>${f.boardContent}</p>
-									</div>
-								</div>
-								<div class="fd-board-bottom">
-									<div align="right"><img class="likeBtn" src="resources/img/star-off.png"></div>
-								</div>
-			           		</div>
-           				</c:otherwise>
-        			</c:choose>
-        		
-           		</c:forEach>
+       
            	</div>
 
 
 			<button type="button" class="btn btn-block btnPink" style="margin-top: 10px;">10개 더보기</button>
 		</div>
-            
+        
+        
+        <script>
+        	$(function(){
+        		selectFeedList();
+        	});
+        	
+        	function selectFeedList(){
+        		$.ajax({
+        			url : 'listtest.fd',
+        			success : function(data){
+        				let value = '';
+        				for(let i in data){
+        					if(data[i].boardType == 'G'){
+        						console.log('G다아아');
+        					}
+        					else{
+        						console.log('M이다아아');
+        					}
+        				}
+        			}
+        		});
+        	}
+        </script>
+        
  
         <form action="" method="post" id="postForm">
         	<input type="hidden" name="bno" value="">
-        
         </form>
 
         <script>
@@ -428,7 +307,12 @@
 						<div><b>내용</b></div>
 						<textarea name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
 						
-						<input multiple="multiple" type="file" name="upfile">
+						<div area="file-area">
+							<input type="file" name="file1" id="file1">
+							<input type="file" name="file2" id="file2">
+							<input type="file" name="file3" id="file3">
+							<input type="file" name="file4" id="file4">
+						</div>
 						
 						<div style="margin-top:10px;">
 						<button type="submit" class="btn btn-primary btn-block">글작성</button>

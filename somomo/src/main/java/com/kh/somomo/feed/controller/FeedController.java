@@ -1,12 +1,9 @@
 package com.kh.somomo.feed.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpSession;
 
@@ -15,11 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.kh.somomo.common.model.vo.PageInfo;
+import com.kh.somomo.common.template.FileRename;
 import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
@@ -51,6 +51,23 @@ public class FeedController {
 		return mv;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="listtest.fd", produces="application/json; charset-UTF-8")
+	public String selectTest(@RequestParam(value="cpage", defaultValue="1") int currentPage) throws ParseException {
+		
+		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 2);
+		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi);
+		for(FeedBoard fb : fList) {
+			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate()));
+			if(fb.getBoardType().equals("M")) {
+				setMeetCondition(fb);
+			}
+		}
+		return new Gson().toJson(fList);
+	}
+	
+	
+	
 	// 모집조건 텍스트 설정 (모집성별 + 모집나이)
 	public void setMeetCondition(FeedBoard fb) {
 		
@@ -76,14 +93,28 @@ public class FeedController {
 							 MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
 		
 		int result = 0;
+		
 		if(fb.getBoardType().equals("G")) { // 일반게시글
-			List<MultipartFile> fileList = mtfRequest.getFiles("upfile");
+			
 			ArrayList<FeedAttachment> fatList = new ArrayList<>();
 			
-			if(!fileList.isEmpty()) {
-				fatList = saveFile(fileList, session);
-			}
+			Iterator<String> fileNames = mtfRequest.getFileNames();
 			
+			while(fileNames.hasNext()) {
+				String fileName = fileNames.next();
+				
+				MultipartFile upfile = mtfRequest.getFile(fileName);
+				if(!upfile.getOriginalFilename().equals("")) {
+					
+					HashMap<String, String> map = FileRename.saveFile(upfile, session, "feedUploadFiles");
+					
+		            FeedAttachment at = new FeedAttachment();
+		            at.setOriginName(map.get("originName"));
+		            at.setChangeName(map.get("changeName"));
+		            fatList.add(at);
+				}
+			}
+
 			result = feedService.insertGeneralBoard(fb, fatList);
 			
 		} else { // 모임모집글
@@ -101,37 +132,6 @@ public class FeedController {
 			model.addAttribute("errorMsg", "게시글 작성 실패");
 			return "common/errorPage";
 		}
-	}
-
-	public ArrayList<FeedAttachment> saveFile(List<MultipartFile> fileList, HttpSession session) {
-
-		ArrayList<FeedAttachment> atList = new ArrayList<>();
-		
-        for (MultipartFile upfile : fileList) {
-            String originName = upfile.getOriginalFilename(); // 원본 파일 명
-            
-            String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()); //년월일시분초
-            int randNum = (int)(Math.random() * 90000) + 10000; // 5자리 랜덤값
-            String ext = originName.substring(originName.lastIndexOf(".")); // 확장자
-
-            // somomo_20220803111150_12345.jpg 형태
-            String changeName = "somomo_" + currentTime + "_" + randNum + ext;
-            
-            FeedAttachment at = new FeedAttachment();
-            at.setOriginName(originName);
-            at.setChangeName("resources/feedUploadFiles/" + changeName);
-            atList.add(at);
-            
-            String savePath = session.getServletContext().getRealPath("/resources/feedUploadFiles/");
-            
-            try {
-            	upfile.transferTo(new File(savePath + changeName));
-            } catch (IllegalStateException | IOException e) {
-    			e.printStackTrace();
-    		}
-        }
-        
-        return atList;
 	}
 	
 	@RequestMapping("detail.fb")
