@@ -17,13 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
+import com.kh.somomo.common.model.vo.Attachment;
+import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.template.FileRename;
 import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
-import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
 
 @Controller
@@ -32,55 +32,63 @@ public class FeedController {
 	@Autowired
 	private FeedService feedService;
 	
-	@RequestMapping("list.fd")
-	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage, ModelAndView mv) throws ParseException {
+	@RequestMapping("main.fd")
+	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
+			                           ModelAndView mv) throws ParseException {
 		
-		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 2);
-		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi);
-		for(FeedBoard fb : fList) {
-			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate()));
-			if(fb.getBoardType().equals("M")) {
-				setMeetCondition(fb);
-			}
-		}
+		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5); // 페이징처리
 		
 		mv.addObject("pi", pi)
-		  .addObject("fList", fList)
-		  .addObject("rList", feedService.selectRegionList())
-		  .setViewName("feed/feedListView");
+		  .addObject("rList", feedService.selectRegionList()) // 지역 카테고리 목록 가져오기
+		  .setViewName("feed/mainFeed");
+		
 		return mv;
 	}
 	
-	@ResponseBody
-	@RequestMapping(value="listtest.fd", produces="application/json; charset-UTF-8")
-	public String selectTest(@RequestParam(value="cpage", defaultValue="1") int currentPage) throws ParseException {
+	@RequestMapping(value="list.fd")
+	public String ajaxSelectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
+							 		 String userId, Model model) throws ParseException {
 		
-		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 2);
-		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi);
+		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5); // 페이징처리
+		
+		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi, userId); // 사용자의 피드 목록 가져오기
 		for(FeedBoard fb : fList) {
-			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate()));
-			if(fb.getBoardType().equals("M")) {
-				setMeetCondition(fb);
+			
+			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate())); // 지난 날짜 설정
+			
+			if(fb.getBoardType().equals("M")) { // 모임글일 경우
+				setMeetCondition(fb); // 모집조건 텍스트 설정
 			}
 		}
-		return new Gson().toJson(fList);
+		
+		HashMap<String, Integer> boardRange = new HashMap<>();
+		boardRange.put("min", fList.get(fList.size()-1).getBoardNo());
+		boardRange.put("max", fList.get(0).getBoardNo());
+			
+		//System.out.println(boardRange.get("min"));
+		//System.out.println(boardRange.get("max"));
+		model.addAttribute("fList", fList)
+			 .addAttribute("atList", feedService.selectFeedAttachmentList(boardRange));
+		
+		return "feed/ajaxFeedList";
 	}
-	
-	
 	
 	// 모집조건 텍스트 설정 (모집성별 + 모집나이)
 	public void setMeetCondition(FeedBoard fb) {
 		
 		String condition = null;
 		
+		// 모집나이, 모집성별 모두 제한 없을 경우
 		if(fb.getMeetAge().equals("A") && fb.getMeetGender().equals("A")) {
 			fb.setMeetCondition("누구나 참여 가능");
 			return;
 		}
 		
+		// 모집나이 문구 설정
 		if(fb.getMeetAge().equals("A")) condition = "나이 제한 없음 | ";
 		else condition = fb.getMeetAge() + "세 | ";
 		
+		// 모집성별 문구 설정
 		if(fb.getMeetGender().equals("A")) condition += "성별제한 없음";
 		else if(fb.getMeetGender().equals("F")) condition += "여성만";
 		else condition += "남성만";
@@ -89,26 +97,28 @@ public class FeedController {
 	}
 	
 	@RequestMapping("insert.fd")
-	public String enrollForm(FeedBoard fb, String minAge, String maxAge,
-							 MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
+	public String enrollForm(FeedBoard fb, MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
 		
 		int result = 0;
 		
-		if(fb.getBoardType().equals("G")) { // 일반게시글
+		// 일반글일 경우 (General)
+		if(fb.getBoardType().equals("G")) { 
+			ArrayList<Attachment> fatList = new ArrayList<>();
 			
-			ArrayList<FeedAttachment> fatList = new ArrayList<>();
+			Iterator<String> fileNames = mtfRequest.getFileNames(); // name 전부 받아오기 (file1, file2, file3, file4)
 			
-			Iterator<String> fileNames = mtfRequest.getFileNames();
-			
-			while(fileNames.hasNext()) {
-				String fileName = fileNames.next();
+			while(fileNames.hasNext()) { // file1 ~ file4
 				
-				MultipartFile upfile = mtfRequest.getFile(fileName);
-				if(!upfile.getOriginalFilename().equals("")) {
+				String file = fileNames.next(); // file 하나씩 접근해서
+				
+				MultipartFile upfile = mtfRequest.getFile(file); // 실제 파일 객체 뽑아오기
+				
+				if(!upfile.getOriginalFilename().equals("")) { // 실제로 파일이 첨부됐을 경우
 					
+					// 지정경로에 해당 파일을 저장하고 원본명,수정명(경로+파일수정명) 반환받음
 					HashMap<String, String> map = FileRename.saveFile(upfile, session, "feedUploadFiles");
 					
-		            FeedAttachment at = new FeedAttachment();
+		            Attachment at = new Attachment();
 		            at.setOriginName(map.get("originName"));
 		            at.setChangeName(map.get("changeName"));
 		            fatList.add(at);
@@ -117,40 +127,43 @@ public class FeedController {
 
 			result = feedService.insertGeneralBoard(fb, fatList);
 			
-		} else { // 모임모집글
+		// 모임모집글일 경우 (Meet)
+		} else { 
 			fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
 			
-			if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접입력했을 시
-				fb.setMeetAge(minAge + "~" + maxAge); // 20~30 형태로 저장
+			if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
+				fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
 			}
+			
 			result = feedService.insertMeetBoard(fb);
 		}
 		
 		if(result > 0) {
-			return "redirect:list.fd";
+			return "redirect:main.fd";
 		} else {
 			model.addAttribute("errorMsg", "게시글 작성 실패");
 			return "common/errorPage";
 		}
 	}
 	
-	@RequestMapping("detail.fb")
+	@RequestMapping("detail.fd")
 	public ModelAndView selectFeedBoard(int bno, ModelAndView mv) {
 		
-		int result = feedService.increaseCount(bno);
+		int result = feedService.increaseCount(bno); // 조회수 증가
 		
 		if(result > 0) {
 			FeedBoard fb = new FeedBoard();
-			String bType = feedService.selectBoardType(bno);
+			String bType = feedService.selectBoardType(bno); // 게시글 타입(G/M) 받아오기
 			
-			if(bType.equals("G")) { // 일반게시글
+			// 일반글일 경우
+			if(bType.equals("G")) { 
 				fb = feedService.selectGeneralBoard(bno);
 				mv.addObject("fb", fb).setViewName("feed/feedGeneralDetailView");
-			} else { // 모임모집글
+				
+			// 모임모집글일 경우
+			} else { 
 				fb = feedService.selectMeetBoard(bno);
-				
-				setMeetCondition(fb); // 모집성별 텍스트 변환
-				
+				setMeetCondition(fb); // 모집조건 텍스트 설정
 				mv.addObject("fb", fb).setViewName("feed/feedMeetDetailView");
 			}
 			
@@ -161,17 +174,29 @@ public class FeedController {
 		return mv;
 	}
 	
-	@RequestMapping("delete.fb")
+	@RequestMapping("delete.fd")
 	public String deleteFeedBoard(int bno, HttpSession session, Model model) {
 		
-		int result = feedService.deleteFeedBoard(bno);
+		int result = feedService.deleteBoard(bno);
 		
 		if(result > 0) {
 			session.setAttribute("alertMsg", "게시글 삭제 성공");
-			return "redirect:list.fd";
+			return "redirect:main.fd";
 		} else {
 			model.addAttribute("errorMsg", "게시글 삭제 실패");
 			return "common/errorPage";
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("insertLike.fd")
+	public String ajaxInsertLike(Likes like) {
+		return feedService.insertLike(like) > 0 ? "success" : "fail";
+	}
+	
+	@ResponseBody
+	@RequestMapping("deleteLike.fd")
+	public String ajaxDeleteLike(Likes like) {
+		return feedService.deleteLike(like) > 0 ? "success" : "fail";
 	}
 }

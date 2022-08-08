@@ -1,14 +1,16 @@
 package com.kh.somomo.feed.model.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.somomo.common.model.vo.Attachment;
+import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.model.vo.RegionCategory;
-import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
 
 @Repository
@@ -18,13 +20,19 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectFeedListCount");
 	}
 	
-	public ArrayList<FeedBoard> selectFeedList(SqlSessionTemplate sqlSession, PageInfo pi) {
+	public ArrayList<FeedBoard> selectFeedList(SqlSessionTemplate sqlSession, PageInfo pi, String userId) {
 		
 		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
 		int limit = pi.getBoardLimit();
 		
 		RowBounds rowBounds = new RowBounds(offset, limit);
-		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedList", null, rowBounds);
+		
+		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedList", userId, rowBounds);
+	}
+	
+	public ArrayList<Attachment> selectFeedAttachmentList(SqlSessionTemplate sqlSession,
+			HashMap<String, Integer> boardRange) {
+		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedAttachmentList", boardRange);
 	}
 	
 	public ArrayList<RegionCategory> selectRegionList(SqlSessionTemplate sqlSession) {
@@ -35,8 +43,8 @@ public class FeedDao {
 		return sqlSession.insert("feedMapper.insertGeneralBoard", b);
 	}
 
-	public int insertFeedAttachment(SqlSessionTemplate sqlSession, FeedAttachment fat) {
-		return sqlSession.insert("feedMapper.insertFeedAttachment", fat);
+	public int insertAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+		return sqlSession.insert("feedMapper.insertAttachment", at);
 	}
 	
 	public int insertMeetBoard(SqlSessionTemplate sqlSession, FeedBoard fb) {
@@ -63,25 +71,25 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectGeneralBoard", boardNo);
 	}
 	
-	public ArrayList<FeedAttachment> selectFeedAttachment(SqlSessionTemplate sqlSession, int boardNo) {
-		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedAttachment", boardNo);
+	public ArrayList<Attachment> selectAttachmentList(SqlSessionTemplate sqlSession, int boardNo) {
+		return (ArrayList)sqlSession.selectList("feedMapper.selectAttachmentList", boardNo);
 	}
 	
 	public FeedBoard selectMeetBoard(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.selectOne("feedMapper.selectMeetBoard", boardNo);
 	}
 
-	public int deleteFeedBoard(SqlSessionTemplate sqlSession, int boardNo) {
-		return sqlSession.update("feedMapper.deleteFeedBoard", boardNo);
+	public int deleteBoard(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.update("feedMapper.deleteBoard", boardNo);
 	}
 
+	public int insertLike(SqlSessionTemplate sqlSession, Likes like) {
+		return sqlSession.insert("feedMapper.insertLike", like);
+	}
 
-
-
-
-
-
-
+	public int deleteLike(SqlSessionTemplate sqlSession, Likes like) {
+		return sqlSession.delete("feedMapper.deleteLike", like);
+	}
 
 
 }

@@ -1,17 +1,19 @@
 package com.kh.somomo.feed.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kh.somomo.common.model.vo.Attachment;
+import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.model.vo.RegionCategory;
+import com.kh.somomo.common.model.vo.Reply;
 import com.kh.somomo.feed.model.dao.FeedDao;
-import com.kh.somomo.feed.model.vo.FeedAttachment;
 import com.kh.somomo.feed.model.vo.FeedBoard;
-import com.kh.somomo.feed.model.vo.FeedReply;
 
 @Service
 public class FeedServiceImpl implements FeedService{
@@ -28,8 +30,13 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
-	public ArrayList<FeedBoard> selectFeedList(PageInfo pi) {
-		return feedDao.selectFeedList(sqlSession, pi);
+	public ArrayList<FeedBoard> selectFeedList(PageInfo pi, String userId) {
+		return feedDao.selectFeedList(sqlSession, pi, userId);
+	}
+	
+	@Override
+	public ArrayList<Attachment> selectFeedAttachmentList(HashMap<String, Integer> boardRange) {
+		return feedDao.selectFeedAttachmentList(sqlSession, boardRange);
 	}
 	
 	@Override
@@ -38,13 +45,13 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
-	public int insertGeneralBoard(FeedBoard fb, ArrayList<FeedAttachment> fatList) {
+	public int insertGeneralBoard(FeedBoard fb, ArrayList<Attachment> atList) {
 		
 		int result1 = feedDao.insertGeneralBoard(sqlSession, fb);
 		int result2 = 1;
-		if(!fatList.isEmpty()) {
-			for(FeedAttachment fat : fatList) {
-				result2 *= feedDao.insertFeedAttachment(sqlSession, fat);
+		if(!atList.isEmpty()) {
+			for(Attachment at : atList) {
+				result2 *= feedDao.insertAttachment(sqlSession, at);
 			}
 		}
 
@@ -75,8 +82,8 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
-	public ArrayList<FeedAttachment> selectFeedAttachment(int boardNo) {
-		return feedDao.selectFeedAttachment(sqlSession, boardNo);
+	public ArrayList<Attachment> selectAttachmentList(int boardNo) {
+		return feedDao.selectAttachmentList(sqlSession, boardNo);
 	}
 
 	@Override
@@ -85,37 +92,37 @@ public class FeedServiceImpl implements FeedService{
 	}
 	
 	@Override
-	public int updateFeedBoard(FeedBoard b) {
+	public int updateBoard(FeedBoard b) {
 		return 0;
 	}
 
 	@Override
-	public int deleteFeedBoard(int boardNo) {
-		return feedDao.deleteFeedBoard(sqlSession, boardNo);
+	public int deleteBoard(int boardNo) {
+		return feedDao.deleteBoard(sqlSession, boardNo);
 	}
 
 	@Override
-	public int insertNewFeedAttachment(ArrayList<FeedAttachment> fatList) {
+	public int insertNewAttachment(ArrayList<Attachment> atList) {
 		return 0;
 	}
 
 	@Override
-	public int deleteFeedAttachment(ArrayList<FeedAttachment> fatList) {
+	public int deleteAttachment(ArrayList<Attachment> atList) {
 		return 0;
 	}
 
 	@Override
-	public ArrayList<FeedReply> selectReplyList(int boardNo) {
+	public ArrayList<Reply> selectReplyList(int boardNo) {
 		return null;
 	}
 
 	@Override
-	public int insertReply(FeedReply reply) {
+	public int insertReply(Reply reply) {
 		return 0;
 	}
 
 	@Override
-	public int updateReply(FeedReply reply) {
+	public int updateReply(Reply reply) {
 		return 0;
 	}
 
@@ -123,6 +130,17 @@ public class FeedServiceImpl implements FeedService{
 	public int deleteReply(int replyNo) {
 		return 0;
 	}
+
+	@Override
+	public int insertLike(Likes like) {
+		return feedDao.insertLike(sqlSession, like);
+	}
+
+	@Override
+	public int deleteLike(Likes like) {
+		return feedDao.deleteLike(sqlSession, like);
+	}
+
 
 
 

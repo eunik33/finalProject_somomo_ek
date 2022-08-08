@@ -22,6 +22,8 @@
 		<result column="NICKNAME" property="nickname" />
 		<result column="COUNT_REPLY" property="countReply" />
 		<result column="COUNT_MEMBER" property="countMember" />
+		<result column="LIKE_CHECK" property="likeCheck" />
+		
 	</resultMap>
 	
 	<resultMap id="regionCategoryResultSet" type="regionCategory">
@@ -29,7 +31,7 @@
 		<result column="REGION_NAME" property="regionName" />
 	</resultMap>
 	
-	<resultMap id="feedAttachmentResultSet" type="feedAttachment">
+	<resultMap id="attachmentResultSet" type="attachment">
 		<result column="FILE_NO" property="fileNo" />
 		<result column="BOARD_NO" property="boardNo" />
 		<result column="ORIGIN_NAME" property="originName" />
@@ -62,7 +64,8 @@
 		       REGION_NAME,
 		       NICKNAME,
                NVL(COUNT_REPLY,0) AS COUNT_REPLY,
-               COUNT_MEMBER
+               COUNT_MEMBER,
+               LIKE_CHECK
 		  FROM 
 		       FEED_BOARD F
 		  JOIN 
@@ -71,27 +74,47 @@
 		       MEMBER ON (BOARD_WRITER = USER_ID)
      LEFT JOIN 
                (SELECT 
-                       COUNT(*) COUNT_REPLY,
+                       COUNT(*) AS COUNT_REPLY,
                        BOARD_NO 
                   FROM 
                        FEED_REPLY 
                  GROUP
-                    BY BOARD_NO) USING(BOARD_NO)
+                    BY BOARD_NO) USING (BOARD_NO)
      LEFT JOIN
                CHAT_ROOM USING(BOARD_NO)
      LEFT JOIN
                (SELECT 
-                       COUNT(*) COUNT_MEMBER,
+                       COUNT(*) AS COUNT_MEMBER,
                        ROOM_NO
                   FROM 
                        CHAT_MEMBER
                  GROUP
-                    BY ROOM_NO) USING(ROOM_NO)
+                    BY ROOM_NO) USING (ROOM_NO)
+     LEFT JOIN
+               (SELECT 
+                       BOARD_NO,
+                       'Y' AS LIKE_CHECK
+                  FROM 
+                       FEED_LIKES
+                 WHERE
+                       USER_ID = #{userId}) USING (BOARD_NO)
 		 WHERE
 		       F.STATUS = 'Y'
 		 ORDER
 		    BY BOARD_NO DESC
 	</select>
+	
+	<select id="selectFeedAttachmentList" parameterType="hashmap" resultMap="attachmentResultSet">
+		SELECT 
+		       FILE_NO,
+		       BOARD_NO,
+		       ORIGIN_NAME,
+		       CHANGE_NAME
+		  FROM 
+		       FEED_ATTACHMENT
+		 WHERE
+		       BOARD_NO BETWEEN #{min} AND #{max}
+    </select>
 	
 	<select id="selectRegionList" resultMap="regionCategoryResultSet">
 		SELECT 
@@ -124,7 +147,7 @@
 		       )
 	</insert>
 	
-	<insert id="insertFeedAttachment" parameterType="feedAttachment">
+	<insert id="insertAttachment" parameterType="attachment">
 		INSERT 
 		  INTO 
 		       FEED_ATTACHMENT
@@ -257,7 +280,7 @@
 		       F.STATUS = 'Y'
 	</select>
 	
-	<select id="selectFeedAttachment" parameterType="_int" resultMap="feedAttachmentResultSet">
+	<select id="selectAttachmentList" parameterType="_int" resultMap="attachmentResultSet">
 		SELECT 
 		       FILE_NO,
 		       BOARD_NO,
@@ -299,7 +322,7 @@
 		       F.STATUS = 'Y'
 	</select>
 	
-	<update id="deleteFeedBoard" parameterType="_int">
+	<update id="deleteBoard" parameterType="_int">
 		UPDATE 
 		       FEED_BOARD
 		   SET 
@@ -307,4 +330,30 @@
 		 WHERE 
 		       BOARD_NO = #{boardNo}
 	</update>
+	
+	<insert id="insertLike" parameterType="likes">
+		INSERT 
+		  INTO
+		       FEED_LIKES
+		       (
+		       USER_ID,
+		       BOARD_NO
+		       )
+		VALUES
+		       (
+		       #{userId},
+		       #{boardNo}
+		       )
+	</insert>
+	
+	<delete id="deleteLike" parameterType="likes">
+		DELETE 
+		  FROM
+		       FEED_LIKES
+		 WHERE
+		       USER_ID = #{userId}
+		   AND
+		       BOARD_NO = #{boardNo}
+	</delete>
+	
 </mapper>

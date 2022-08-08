@@ -92,8 +92,9 @@
 			width:30px;
 			height:30px;
 		}
+		.likeBtn:hover {cursor:pointer;}
 		
-		/*모달창 내 버튼 색 (다른 페이지와 통일 필요)*/
+		/* 버튼 색 (다른 페이지와 통일 필요) */
 		.btnPink {
 			color: white;
 			background-color: rgb(250,188,186);
@@ -174,7 +175,7 @@
 		
 			<ul class="logout-mode">
 				<li>
-					<a href="#">
+					<a href="logout.me">
 						<i class="uil uil-signout"></i>
 						<span class="link-name">Logout</span>
 					</a>
@@ -206,75 +207,170 @@
 				<button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-primary">일반글</button>
            		<button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-primary">모임모집</button>
            	</div>
+           	
 			<!-----------글 목록 띄워지는 공간----------->
            	<div class="fd-board-area">
 
        
            	</div>
 
-
-			<button type="button" class="btn btn-block btnPink" style="margin-top: 10px;">10개 더보기</button>
 		</div>
         
-        
-        <script>
-        	$(function(){
-        		selectFeedList();
-        	});
-        	
-        	function selectFeedList(){
-        		$.ajax({
-        			url : 'listtest.fd',
-        			success : function(data){
-        				let value = '';
-        				for(let i in data){
-        					if(data[i].boardType == 'G'){
-        						console.log('G다아아');
-        					}
-        					else{
-        						console.log('M이다아아');
-        					}
-        				}
-        			}
-        		});
-        	}
-        </script>
-        
- 
         <form action="" method="post" id="postForm">
         	<input type="hidden" name="bno" value="">
         </form>
-
+        
+        
         <script>
-        	$(function(){
-        		// 게시글 상세보기
-            	$('.fd-board-contents').click(function(){
-            		let bno = $(this).parent().find('input[name="boardNo"]').val();
-            		location.href = "detail.fb?bno=" + bno;
-            	});
-            	
-            	// 게시글 삭제
-        		$('.checkDelete').click(function(){
-        			if(confirm("삭제하시겠습니까?")){
-	        			//let bno = $(this).parents().eq(7).find('input').val();
-        				let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
-        				$('#postForm input[name="bno"]').val(bno);
-        				$('#postForm').attr('action', 'delete.fb').submit();
-        			}
+	    	$(function(){
+	    		selectFeedList();
+	    		
+	    		// 무한스크롤 이벤트 처리
+				let currentPage = ${pi.currentPage} ;
+				$(window).on('scroll', function(){
+					
+					// 현재 스크롤바 위치 값 (맨 위로 올릴 경우 $(window).scrollTop(0))
+					// 스크롤 위치에 따라 변하는 값
+					let scrollTop = $(window).scrollTop(); 
+					
+					// 현재 보고 있는 브라우저 창의 높이
+					let windowHeight = $(window).height();
+					
+					// jsp, html 등 문서의 높이
+					// windowHeight 보다 documentHeight가 길면 스크롤이 생김
+					let documentHeight = $(document).height();
+					
+					// 스크롤이 바닥에 닿았을 때
+					let isBottom = scrollTop + windowHeight >= documentHeight;
+					if(isBottom){
+						// 현재가 마지막 페이지일 경우
+						if(currentPage == ${pi.maxPage}){
+							return; // 종료
+						}
+						
+						currentPage++; // 다음 페이지 요청
+						console.log("현재 페이지:" + currentPage);
+						
+						// 다음페이지 가져오기
+						selectFeedList(currentPage);
+					}
+				});
+				
+	    	});
+        
+        	function selectFeedList(currentPage){
+        		
+        		$.ajax({
+        			url : 'list.fd',
+        			data : {
+        				cpage : currentPage,
+        				userId : '${loginUser.userId}'
+        			},
+        			success : function(data){
+        				
+        				// 응답된 문자열은 html형식(feed/ajaxFeedList.jsp에 응답내용 있음)
+						$('.fd-board-area').append(data);
+
+						isLoading=false;
+						// 게시글 내용 클릭 시 상세페이지로 이동
+		            	$('.fd-board-contents').click(function(){
+		            		//let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
+		            		let bno = $(this).parent().find('input[name="boardNo"]').val();
+		            		location.href = "detail.fd?bno=" + bno;
+		            	});
+						
+						// 게시글 삭제
+						$('.checkDelete').click(function(){
+			        		if(confirm("삭제하시겠습니까?")){
+			    				let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
+			    				$('#postForm input[name="bno"]').val(bno);
+			    				$('#postForm').attr('action', 'delete.fd').submit();
+			    			}
+						});
+						
+						// 좋아요 버튼 클릭 시 ajax로 변경
+						$('.likeBtn').click(function(){	
+							changeLike(this);
+							
+						});
+       				}
         		});
-            	
-            });
+			}
+ 
         	
-        	// 게시글 수정, 삭제
-        	function postFormSubmit(num){
-        		if(num == 1){ // 수정
-        			$('#postForm').attr('action', 'update.fb').submit();
+        	function changeLike(likeImg){
+        		
+        		let bno = $(likeImg).data('bno');
+        		let boardType = $(likeImg).data('btype');
+        		
+        		console.log('글번호:' + bno);
+
+				// 기존에 좋아요 안 눌렀을 경우 => 좋아요 등록
+        		if($(likeImg).children('img').hasClass('likeN')){ 
+        			
+        			//console.log('좋아요 등록');
+            		
+        			$.ajax({
+            			url : 'insertLike.fd',
+            			method : 'POST',
+            			data : { 
+            				userId : '${loginUser.userId}',
+            				boardNo : bno
+            			},
+            			success : function(result){
+            				
+            				if(result == 'success'){
+            					if(boardType == 'G'){ // 일반글이었을 경우
+            						$(likeImg).html('<img class="likeY" src="resources/img/heart-on.png">');
+            					}
+            					else{ // 모임모집글이었을 경우
+            						$(likeImg).html('<img class="likeY" src="resources/img/star-on.png">');
+            					}
+            				}
+            			},
+            			error : function(){
+            				//console.log('에러');
+            			}
+            		});
+            	}
+        		
+        		// 기존에 좋아요 눌렀을 경우 => 좋아요 취소
+        		else{ 
+        			
+        			//console.log('좋아요 취소');
+        			
+            		$.ajax({
+            			url : 'deleteLike.fd',
+            			method : 'POST',
+            			data : { 
+            				userId : '${loginUser.userId}',
+            				boardNo : bno
+            			},
+            			success : function(result){
+            				
+            				if(result == 'success'){
+            					
+            					if(boardType == 'G'){ // 일반글이었을 경우
+            						$(likeImg).html('<img class="likeN" src="resources/img/heart-off.png">');
+            					}
+            					else{ // 모임모집글이었을 경우
+            						$(likeImg).html('<img class="likeN" src="resources/img/star-off.png">');
+            					}
+            				}
+            			},
+            			error : function(){
+            				//console.log('에러');
+            			}
+            		});
         		}
+
         	}
         	
+
         </script>
-            
-            
+        <script>
+
+        </script>
             
 	    <!--------------------- Modal 창 --------------------->
 	            
