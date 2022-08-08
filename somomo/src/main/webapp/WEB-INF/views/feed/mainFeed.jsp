@@ -386,39 +386,46 @@
 								
 					<div class="modal-body">
 						<form action="insert.fd" method="post" enctype="multipart/form-data">
-						<input type="hidden" name="boardWriter" value="user01">
-						<input type="hidden" name="boardType" value="G">
-								
-						<div><b>지역</b></div>
-						<select name="regionNo" class="custom-select" style="width:200px;" required>
-							<option value="">지역선택</option>
-							<c:forEach var="r" items="${rList}">
-								<option value="${r.regionNo}">${r.regionName}</option>
-							</c:forEach>
-						</select>
-						
-						<div><b>제목</b></div>
-						<input type="text" name="boardTitle" class="form-control" maxlength="50" placeholder="제목을 입력해주세요" required></textarea>
-						
-						<div><b>내용</b></div>
-						<textarea name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
-						
-						<div area="file-area">
-							<input type="file" name="file1" id="file1">
-							<input type="file" name="file2" id="file2">
-							<input type="file" name="file3" id="file3">
-							<input type="file" name="file4" id="file4">
-						</div>
-						
-						<div style="margin-top:10px;">
-						<button type="submit" class="btn btn-primary btn-block">글작성</button>
-						</div>
+							<input type="hidden" name="boardWriter" value="${loginUser.userId}">
+							<input type="hidden" name="boardType" value="G">
+									
+							<div><b>지역</b></div>
+							<select name="regionNo" class="custom-select" style="width:200px;" required>
+								<option value="">지역선택</option>
+								<c:forEach var="r" items="${rList}">
+									<option value="${r.regionNo}">${r.regionName}</option>
+								</c:forEach>
+							</select>
+							
+							<div><b>제목</b></div>
+							<input type="text" name="boardTitle" class="form-control" maxlength="50" placeholder="제목을 입력해주세요" required></textarea>
+							
+							<div><b>내용</b></div>
+							<textarea name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
+							
+							<div area="file-area">
+								<input type="file" name="file1" id="file1"><input type="button" value="파일 삭제" onclick="fileReset(1);">
+								<input type="file" name="file2" id="file2"><input type="button" value="파일 삭제" onclick="fileReset(2);">
+								<input type="file" name="file3" id="file3"><input type="button" value="파일 삭제" onclick="fileReset(3);">
+								<input type="file" name="file4" id="file4"><input type="button" value="파일 삭제" onclick="fileReset(4);">
+							</div>
+							
+							<div style="margin-top:10px;">
+								<button type="submit" class="btn btn-block btnPink">글작성</button>
+							</div>
 						</form>
 					</div>				
 					
 				</div>
 			</div>
 		</div>
+		
+		<script>
+			// 첨부파일 삭제
+			function fileReset(num){
+				$('#file'+num).val('');
+			}
+		</script>
 		
 	    <!------- 모임모집글 작성 모달 ------->
 		<div class="modal fade" id="enrollMeetBoardModal">
@@ -432,7 +439,7 @@
 								
 					<div class="modal-body">
 						<form action="insert.fd" method="post" enctype="multipart/form-data">
-							<input type="hidden" name="boardWriter" value="user01">
+							<input type="hidden" name="boardWriter" value="${loginUser.userId}">
 							<input type="hidden" name="boardType" value="M">
 									
 							<div><b>지역</b></div>
@@ -478,7 +485,7 @@
 								</div>
 								~
 								<div class="col-sm-3">
-									<input type="number" min="15" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;">
+									<input type="number" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;">
 								</div>
 							</div>
 							
