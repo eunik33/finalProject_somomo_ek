@@ -61,14 +61,20 @@ public class FeedController {
 			}
 		}
 		
-		HashMap<String, Integer> boardRange = new HashMap<>();
-		boardRange.put("min", fList.get(fList.size()-1).getBoardNo());
-		boardRange.put("max", fList.get(0).getBoardNo());
+		ArrayList<Attachment> fatList = new ArrayList<>();
+		if(!fList.isEmpty()) {
+			HashMap<String, Integer> boardRange = new HashMap<>();
+			boardRange.put("min", fList.get(fList.size()-1).getBoardNo()); // 첫번 째 글번호
+			boardRange.put("max", fList.get(0).getBoardNo()); // 마지막 글번호
 			
-		//System.out.println(boardRange.get("min"));
-		//System.out.println(boardRange.get("max"));
+			//System.out.println(boardRange.get("min"));
+			//System.out.println(boardRange.get("max"));
+			//System.out.println(feedService.selectFeedAttachmentList(boardRange));
+			fatList = feedService.selectFeedAttachmentList(boardRange);
+		}
+			
 		model.addAttribute("fList", fList)
-			 .addAttribute("atList", feedService.selectFeedAttachmentList(boardRange));
+			 .addAttribute("fatList", fatList);
 		
 		return "feed/ajaxFeedList";
 	}

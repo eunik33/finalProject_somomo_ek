@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <!----------- CSS --------------->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
     <!----------- 아이콘 CSS 링크 ------->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <!----------- 아이콘 CSS 링크 version 2------->
@@ -27,8 +27,6 @@
 	<style>
 		/* 제일 상단의 일반글/모임모집 작성 버튼 영역 */
 		.fd-enroll-btn-area {
-	       border: 1px solid rgb(158, 156, 156);
-	       border-radius:5px;
 	       padding: 10px;
 	       text-align:center;
 	   	}
@@ -45,6 +43,11 @@
 		
 		/* 글 상단의 일반글/모임모집 부분*/
 		/* 일반글 태그 (General) */
+		.fd-board-top a {
+			text-decoration: none;
+			color: black;
+			
+		}
 		.btnBoardTypeG {
 	       font-size: 12px;
 	       border-radius: 20px;
@@ -123,7 +126,7 @@
 		<div class="menu-items">
 			<ul class="nav-links">
 				<li>
-					<a href="list.fd">
+					<a href="main.fd">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">HOME</span>
 					</a>
@@ -140,6 +143,12 @@
 						<span class="link-name">My Page</span>
 					</a>
 				</li>
+				
+				<div class="fd-enroll-btn-area">
+					<button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-block btnPink">일반글 작성</button>
+           			<button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-block btnPink">모임모집글 작성</button>
+           		</div>
+           		
 				<!-- 나중에 margin으로 조절-->
 				<br><br><br><br>
 				
@@ -202,11 +211,6 @@
 
 		<!------ 메인 피드----------->
         <div class="main-feed">
-            
-			<div class="fd-enroll-btn-area">
-				<button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-primary">일반글</button>
-           		<button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-primary">모임모집</button>
-           	</div>
            	
 			<!-----------글 목록 띄워지는 공간----------->
            	<div class="fd-board-area">
@@ -223,11 +227,17 @@
         
         <script>
 	    	$(function(){
-	    		selectFeedList();
+	    		
+	    		let currentPage = ${pi.currentPage} ;
+	    		//let currentPage = 1 ;
+	    		
+	    		selectFeedList(currentPage);
 	    		
 	    		// 무한스크롤 이벤트 처리
-				let currentPage = ${pi.currentPage} ;
 				$(window).on('scroll', function(){
+					if(${pi.maxPage eq 0}){
+						return; // 등록된 게시글이 없을 경우 종료
+					}
 					
 					// 현재 스크롤바 위치 값 (맨 위로 올릴 경우 $(window).scrollTop(0))
 					// 스크롤 위치에 따라 변하는 값
@@ -241,15 +251,16 @@
 					let documentHeight = $(document).height();
 					
 					// 스크롤이 바닥에 닿았을 때
-					let isBottom = scrollTop + windowHeight >= documentHeight;
+					let isBottom = scrollTop + windowHeight + 5 >= documentHeight;
+					//console.log('바닥인가?' + isBottom);
 					if(isBottom){
 						// 현재가 마지막 페이지일 경우
 						if(currentPage == ${pi.maxPage}){
+							console.log('종료');
 							return; // 종료
 						}
 						
 						currentPage++; // 다음 페이지 요청
-						console.log("현재 페이지:" + currentPage);
 						
 						// 다음페이지 가져오기
 						selectFeedList(currentPage);
@@ -260,11 +271,14 @@
         
         	function selectFeedList(currentPage){
         		
+        		console.log("요청페이지:" + currentPage);
+        		
         		$.ajax({
         			url : 'list.fd',
+        			method : 'POST',
         			data : {
-        				cpage : currentPage,
-        				userId : '${loginUser.userId}'
+        				userId : '${loginUser.userId}',
+        				cpage : currentPage
         			},
         			success : function(data){
         				
@@ -341,10 +355,9 @@
         			
             		$.ajax({
             			url : 'deleteLike.fd',
-            			method : 'POST',
             			data : { 
-            				userId : '${loginUser.userId}',
-            				boardNo : bno
+            				boardNo : bno,
+            				userId : '${loginUser.userId}'
             			},
             			success : function(result){
             				
@@ -397,13 +410,13 @@
 								</c:forEach>
 							</select>
 							
-							<div><b>제목</b></div>
+							<div class="mdm"><b>제목</b></div>
 							<input type="text" name="boardTitle" class="form-control" maxlength="50" placeholder="제목을 입력해주세요" required></textarea>
 							
-							<div><b>내용</b></div>
+							<div class="mdm"><b>내용</b></div>
 							<textarea name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
 							
-							<div area="file-area">
+							<div class="mdm file-area">
 								<input type="file" name="file1" id="file1"><input type="button" value="파일 삭제" onclick="fileReset(1);">
 								<input type="file" name="file2" id="file2"><input type="button" value="파일 삭제" onclick="fileReset(2);">
 								<input type="file" name="file3" id="file3"><input type="button" value="파일 삭제" onclick="fileReset(3);">
@@ -450,10 +463,10 @@
 								</c:forEach>
 							</select>
 							
-							<div><b>제목</b></div>
+							<div class="mdm"><b>제목</b></div>
 							<input type="text" name="boardTitle" class="form-control" maxlength="50" placeholder="제목을 입력해주세요" required></textarea>
 							
-							<div><b>내용</b></div>
+							<div class="mdm"><b>내용</b></div>
 							<textarea name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
 	
 									
@@ -481,11 +494,11 @@
 							
 							<div class="row" id="selectAge-area" style="display:none">
 								<div class="col-sm-3">
-									<input type="number" min="15" class="selAge form-control" id="minAge" name="minAge" style="width:100px;">
+									<input type="number" min="15" class="selAge form-control" id="minAge" name="minAge" style="width:100px;" value="15">
 								</div>
 								~
 								<div class="col-sm-3">
-									<input type="number" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;">
+									<input type="number" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;" value="15">
 								</div>
 							</div>
 							
@@ -520,7 +533,7 @@
            		});
            		
            		// 최대나이가 입력된 최소나이 이상이 되게끔 처리
-           		$('#minAge').bind('input', function(){
+				$('#minAge').on('focus keyup input', function(){
            			let minAge = $(this).val();
            			
            			if($('#maxAge').val() < minAge){
