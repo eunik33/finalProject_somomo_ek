@@ -47,7 +47,7 @@ public class FeedController {
 	
 	@RequestMapping(value="list.fd")
 	public String ajaxSelectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
-							 		 String userId, Model model) throws ParseException {
+	 		 						 String userId, Model model) throws ParseException {
 		
 		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5); // 페이징처리
 		
@@ -122,7 +122,7 @@ public class FeedController {
 				if(!upfile.getOriginalFilename().equals("")) { // 실제로 파일이 첨부됐을 경우
 					
 					// 지정경로에 해당 파일을 저장하고 원본명,수정명(경로+파일수정명) 반환받음
-					HashMap<String, String> map = FileRename.saveFile(upfile, session, "feedUploadFiles");
+					HashMap<String, String> map = FileRename.saveFile(upfile, session, "img/feedUploadFiles");
 					
 		            Attachment at = new Attachment();
 		            at.setOriginName(map.get("originName"));
@@ -184,7 +184,7 @@ public class FeedController {
 	public String deleteFeedBoard(int bno, HttpSession session, Model model) {
 		
 		int result = feedService.deleteBoard(bno);
-		
+		//TODO 일반글 + 첨부파일 존재했을 경우 attachment도 삭제 필요
 		if(result > 0) {
 			session.setAttribute("alertMsg", "게시글 삭제 성공");
 			return "redirect:main.fd";

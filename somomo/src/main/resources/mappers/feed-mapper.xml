@@ -63,7 +63,7 @@
 		       MEET_AGE,
 		       REGION_NAME,
 		       NICKNAME,
-               NVL(COUNT_REPLY,0) AS COUNT_REPLY,
+               NVL(COUNT_REPLY, 0) AS COUNT_REPLY,
                COUNT_MEMBER,
                LIKE_CHECK
 		  FROM 
@@ -114,6 +114,8 @@
 		       FEED_ATTACHMENT
 		 WHERE
 		       BOARD_NO BETWEEN #{min} AND #{max}
+		 ORDER
+		    BY BOARD_NO DESC, FILE_NO ASC
     </select>
 	
 	<select id="selectRegionList" resultMap="regionCategoryResultSet">
@@ -283,7 +285,6 @@
 	<select id="selectAttachmentList" parameterType="_int" resultMap="attachmentResultSet">
 		SELECT 
 		       FILE_NO,
-		       BOARD_NO,
 		       ORIGIN_NAME,
 		       CHANGE_NAME 
 		  FROM 
