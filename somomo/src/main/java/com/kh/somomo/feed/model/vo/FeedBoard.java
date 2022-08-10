@@ -48,7 +48,6 @@ public class FeedBoard {
 	
 	// FEED_LIKES테이블과 JOIN해서 받아온 값
 	private String likeCheck; // 좋아요 클릭 여부
-	private int countLike; // 좋아요 개수
 	
 	
 }
