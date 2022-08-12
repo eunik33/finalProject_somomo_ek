@@ -13,24 +13,17 @@
     <!-- Boxicons CSS -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     
-	<!-- Bootstrap-->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-	      <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
 	<!-- jquery -->
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+ 	
+	<!-- Bootstrap-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>메인 페이지</title>
     
 	<style>
-		/* 제일 상단의 일반글/모임모집 작성 버튼 영역 */
-		.fd-enroll-btn-area {
-	       padding: 10px;
-	       text-align:center;
-	   	}
-		
 		/**************** 게시글 부분 ********************/
 		/* 글 테두리*/
 		.fd-board {
@@ -213,6 +206,28 @@
 
 		<!------ 메인 피드----------->
         <div class="main-feed">
+        
+             <!----------------------------- 버튼 ------------------------------------->
+			<div class="edit-navigation">
+				<div class="menuToggle">
+					<i class="uil uil-edit"></i>
+					<div class="menu">
+						<ul>
+							<li><button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-primary">일반글</button></li>
+							<li><button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-primary">모임모집</button></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<script>
+				// 글쓰기 버튼 Toggle javascript
+				const menu = document.querySelector('.menuToggle');
+				
+				menu.addEventListener('click', function() {
+					console.log(menu);
+				menu.classList.toggle('active');
+				});
+       		</script>
            	
 			<!-----------글 목록 띄워지는 공간----------->
            	<div class="fd-board-area">
@@ -381,9 +396,6 @@
 
         	}
         	
-
-        </script>
-        <script>
 
         </script>
             
