@@ -92,13 +92,23 @@ public class FeedServiceImpl implements FeedService{
 	}
 	
 	@Override
-	public int updateBoard(FeedBoard b) {
+	public int updateGeneralBoard(FeedBoard fb) {
 		return 0;
 	}
 
 	@Override
+	public int updateMeetBoard(FeedBoard fb) {
+		return feedDao.updateMeetBoard(sqlSession, fb);
+	}
+	
+	@Override
 	public int deleteBoard(int boardNo) {
 		return feedDao.deleteBoard(sqlSession, boardNo);
+	}
+	
+	@Override
+	public int deleteAllAttachment(int boardNo) {
+		return feedDao.deleteAllAttachment(sqlSession, boardNo);
 	}
 
 	@Override
@@ -144,6 +154,11 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public int checkLike(Likes like) {
 		return feedDao.checkLike(sqlSession, like);
+	}
+
+	@Override
+	public int countLike(int boardNo) {
+		return feedDao.countLike(sqlSession, boardNo);
 	}
 
 

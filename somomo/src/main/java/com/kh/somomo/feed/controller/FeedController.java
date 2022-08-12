@@ -1,5 +1,6 @@
 package com.kh.somomo.feed.controller;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,15 +162,15 @@ public class FeedController {
 	}
 	
 	@RequestMapping("detail.fd")
-	public ModelAndView selectFeedBoard(int bno, ModelAndView mv, Model model) {
+	public ModelAndView selectFeedBoard(int boardNo, ModelAndView mv, Model model) {
 		
-		int result = feedService.increaseCount(bno); // 조회수 증가
+		int result = feedService.increaseCount(boardNo); // 조회수 증가
 		
 		FeedBoard fb = new FeedBoard();
-		fb.setBoardNo(bno);
+		fb.setBoardNo(boardNo);
 		
 		if(result > 0) {
-			fb.setBoardType(feedService.selectBoardType(bno)); // 게시글 타입(G/M) 받아오기
+			fb.setBoardType(feedService.selectBoardType(boardNo)); // 게시글 타입(G/M) 받아오기
 			
 			// 일반글일 경우
 			if(fb.getBoardType().equals("G")) mv.setViewName("feed/feedGeneralDetailView");
@@ -186,7 +187,7 @@ public class FeedController {
 	}
 	
 	@RequestMapping("selectBoard.fd")
-	public String selectBoard(int boardNo, Model model) {
+	public String ajaxSelectBoard(int boardNo, Model model) {
 		
 		FeedBoard fb = new FeedBoard();
 		String bType = feedService.selectBoardType(boardNo); //게시글 타입(G/M) 받아오기
@@ -207,12 +208,70 @@ public class FeedController {
 		
 	}
 	
-	@RequestMapping("delete.fd")
-	public String deleteFeedBoard(int bno, HttpSession session, Model model) {
+	@RequestMapping("update.fd")
+	public String updateBoard(FeedBoard fb, MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
+		int result = 0;
+
+		// 일반글일 경우 (General)
+		if(fb.getBoardType().equals("G")) { 
+
+			//result = feedService.updateGeneralBoard(fb);
+			
+		// 모임모집글일 경우 (Meet)
+		} else { 
+			fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
+			
+			if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
+				fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
+			}
+			
+			result = feedService.updateMeetBoard(fb);
+		}
 		
-		int result = feedService.deleteBoard(bno);
-		//TODO 일반글 + 첨부파일 존재했을 경우 attachment도 삭제 필요
 		if(result > 0) {
+			return "redirect:detail.fd?boardNo="+fb.getBoardNo();
+		} else {
+			model.addAttribute("errorMsg", "게시글 수정 실패");
+			return "common/errorPage";
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="getModalContent.fd", produces="application/json; charset=UTF-8")
+	public String ajaxModalContent(int boardNo) {
+		
+		FeedBoard fb = new FeedBoard();
+		String bType = feedService.selectBoardType(boardNo); //게시글 타입(G/M) 받아오기
+		
+		// 일반글일 경우
+		if(bType.equals("G")) { 
+			fb = feedService.selectGeneralBoard(boardNo);
+			
+		// 모임모집글일 경우
+		} else { 
+			fb = feedService.selectMeetBoard(boardNo);
+			setMeetCondition(fb);
+		}
+		
+		return new Gson().toJson(fb);
+	}
+	
+	@RequestMapping("delete.fd")
+	public String deleteBoard(int boardNo, HttpSession session, Model model) {
+		
+		
+		int result = feedService.deleteBoard(boardNo);
+		
+		// 글 삭제 성공했을 경우
+		if(result > 0) { 
+			ArrayList<Attachment> atList = feedService.selectAttachmentList(boardNo);
+			// 첨부파일 존재했을 경우
+			if(!atList.isEmpty()) {
+				feedService.deleteAllAttachment(boardNo); // DB에서 삭제
+				for(Attachment at : atList) {
+					new File(session.getServletContext().getRealPath(at.getChangeName())).delete(); // 실제 파일 삭제
+				}
+			}
 			session.setAttribute("alertMsg", "게시글 삭제 성공");
 			return "redirect:main.fd";
 		} else {
@@ -237,5 +296,11 @@ public class FeedController {
 	@RequestMapping("checkLike.fd")
 	public String ajaxCheckLike(Likes like) {
 		return feedService.checkLike(like) > 0 ? "Y" : "N";
+	}
+	
+	@ResponseBody
+	@RequestMapping("countLike.fd")
+	public int ajaxCountLikes(int boardNo) {
+		return feedService.countLike(boardNo);
 	}
 }

@@ -46,13 +46,16 @@ public interface FeedService {
 	
 	//------- 게시글 수정/삭제 서비스 -------//
 	// 게시글 내용 수정
-	int updateBoard(FeedBoard fb);
+	int updateGeneralBoard(FeedBoard fb);
+	int updateMeetBoard(FeedBoard fb);
 	// 새 첨부파일 추가
 	int insertNewAttachment(ArrayList<Attachment> atList);
 	// 기존 첨부파일 삭제
 	int deleteAttachment(ArrayList<Attachment> atList);
 	// 게시글 삭제
 	int deleteBoard(int boardNo);
+	// 기존 첨부파일 전체 삭제
+	int deleteAllAttachment(int boardNo);
 
 	//------- 댓글 서비스 -------//
 	// 댓글 목록 조회
@@ -71,5 +74,7 @@ public interface FeedService {
 	int deleteLike(Likes like);
 	// 좋아요 확인
 	int checkLike(Likes like);
+	// 좋아요 개수 확인
+	int countLike(int boardNo);
 	
 }

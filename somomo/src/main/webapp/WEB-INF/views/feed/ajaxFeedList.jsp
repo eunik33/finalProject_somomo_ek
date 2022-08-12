@@ -27,7 +27,7 @@
 									<div class="dropdown">
 										<i class='bx bx-dots-vertical-rounded dropdown-toggle' data-toggle="dropdown">
 											<div class="dropdown-menu">
-												<a class="dropdown-item" href="#">수정</a>
+												<a class="dropdown-item updateGeneralBoard">수정</a>
 												<a class="dropdown-item checkDelete">삭제</a>
 												<a class="dropdown-item" href="#">신고(미정)</a>
 											</div>

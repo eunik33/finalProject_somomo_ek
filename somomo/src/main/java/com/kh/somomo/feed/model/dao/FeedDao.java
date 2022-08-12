@@ -79,8 +79,16 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectMeetBoard", boardNo);
 	}
 
+	public int updateMeetBoard(SqlSessionTemplate sqlSession, FeedBoard fb) {
+		return sqlSession.update("feedMapper.updateMeetBoard", fb);
+	}
+	
 	public int deleteBoard(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.update("feedMapper.deleteBoard", boardNo);
+	}
+	
+	public int deleteAllAttachment(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.delete("feedMapper.deleteAllAttachment", boardNo);
 	}
 
 	public int insertLike(SqlSessionTemplate sqlSession, Likes like) {
@@ -93,6 +101,10 @@ public class FeedDao {
 
 	public int checkLike(SqlSessionTemplate sqlSession, Likes like) {
 		return sqlSession.selectOne("feedMapper.checkLike", like);
+	}
+
+	public int countLike(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.selectOne("feedMapper.countLike", boardNo);
 	}
 
 

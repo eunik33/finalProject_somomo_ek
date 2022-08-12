@@ -238,7 +238,7 @@
 		</div>
         
         <form action="" method="post" id="postForm">
-        	<input type="hidden" name="bno" value="">
+        	<input type="hidden" name="boardNo" value="">
         </form>
         
         
@@ -306,15 +306,15 @@
 						// 게시글 내용 클릭 시 상세페이지로 이동
 		            	$('.fd-board-contents').click(function(){
 		            		//let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
-		            		let bno = $(this).parent().find('input[name="boardNo"]').val();
-		            		location.href = "detail.fd?bno=" + bno;
+		            		let boardNo = $(this).parent().find('input[name="boardNo"]').val();
+		            		location.href = "detail.fd?boardNo=" + boardNo;
 		            	});
 						
 						// 게시글 삭제
 						$('.checkDelete').click(function(){
 			        		if(confirm("삭제하시겠습니까?")){
 			    				let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
-			    				$('#postForm input[name="bno"]').val(bno);
+			    				$('#postForm input[name="boardNo"]').val(bno);
 			    				$('#postForm').attr('action', 'delete.fd').submit();
 			    			}
 						});
