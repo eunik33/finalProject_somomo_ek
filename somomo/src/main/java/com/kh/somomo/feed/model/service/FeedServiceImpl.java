@@ -141,6 +141,11 @@ public class FeedServiceImpl implements FeedService{
 		return feedDao.deleteLike(sqlSession, like);
 	}
 
+	@Override
+	public int checkLike(Likes like) {
+		return feedDao.checkLike(sqlSession, like);
+	}
+
 
 
 

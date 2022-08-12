@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <!----------- CSS --------------->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css">
     <!----------- 아이콘 CSS 링크 ------->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <!----------- 아이콘 CSS 링크 version 2------->
@@ -34,11 +34,13 @@
 		/**************** 게시글 부분 ********************/
 		/* 글 테두리*/
 		.fd-board {
-			border: 1px solid rgb(158, 156, 156);
-			box-shadow: 0 1px 0 0 lightgray;
-		    border-radius:5px;
-		    padding: 10px;
-		    margin-top:10px;
+		    width: 100%;
+		    background: #fff;
+		    border-radius: 6px;
+		    padding: 20px;
+		    columns:#626262;
+		    box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
+		    margin:10px;
 		}
 		
 		/* 글 상단의 일반글/모임모집 부분*/

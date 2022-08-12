@@ -91,5 +91,9 @@ public class FeedDao {
 		return sqlSession.delete("feedMapper.deleteLike", like);
 	}
 
+	public int checkLike(SqlSessionTemplate sqlSession, Likes like) {
+		return sqlSession.selectOne("feedMapper.checkLike", like);
+	}
+
 
 }

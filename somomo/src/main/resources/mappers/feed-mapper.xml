@@ -23,7 +23,7 @@
 		<result column="COUNT_REPLY" property="countReply" />
 		<result column="COUNT_MEMBER" property="countMember" />
 		<result column="LIKE_CHECK" property="likeCheck" />
-		
+		<result column="COUNT_LIKE" property="countLike" />
 	</resultMap>
 	
 	<resultMap id="regionCategoryResultSet" type="regionCategory">
@@ -267,7 +267,7 @@
 		       BOARD_TYPE,
 		       BOARD_TITLE,
 		       BOARD_CONTENT,
-		       BOARD_DATE,
+		       TO_CHAR(BOARD_DATE, 'YYYY-MM-DD HH24:MI') AS BOARD_DATE,
 		       REGION_NAME,
 		       NICKNAME
 		  FROM
@@ -301,11 +301,11 @@
 		       BOARD_TYPE,
 		       BOARD_TITLE,
 		       BOARD_CONTENT,
-		       BOARD_DATE,
+		       TO_CHAR(BOARD_DATE, 'YYYY-MM-DD HH24:MI') AS BOARD_DATE,
 		       MEET_PLACE,
 		       LONGITUDE,
 		       LATITUDE,
-		       MEET_DATE,
+		       TO_CHAR(MEET_DATE, 'YYYY-MM-DD HH24:MI') AS MEET_DATE,
 		       MEET_TOTAL,
 		       MEET_GENDER,
 		       MEET_AGE,
@@ -378,5 +378,16 @@
 		   AND
 		       BOARD_NO = #{boardNo}
 	</delete>
+	
+	<select id="checkLike" parameterType="likes" resultType="_int">
+		SELECT 
+		       COUNT(*)
+		  FROM 
+		       FEED_LIKES 
+		 WHERE 
+		       USER_ID = #{userId}
+		   AND
+		       BOARD_NO = #{boardNo}	       
+	</select>
 	
 </mapper>

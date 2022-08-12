@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
@@ -79,7 +80,7 @@ public class FeedController {
 		return "feed/ajaxFeedList";
 	}
 	
-	// 모집조건 텍스트 설정 (모집성별 + 모집나이)
+	// 모집조건 설정 (모집성별 + 모집나이)
 	public void setMeetCondition(FeedBoard fb) {
 		
 		String condition = null;
@@ -91,8 +92,15 @@ public class FeedController {
 		}
 		
 		// 모집나이 문구 설정
-		if(fb.getMeetAge().equals("A")) condition = "나이 제한 없음 | ";
-		else condition = fb.getMeetAge() + "세 | ";
+		if(fb.getMeetAge().equals("A")) {
+			condition = "나이 제한 없음 | ";
+		} else {
+			condition = fb.getMeetAge() + "세 | ";
+			// 최소나이, 최대나이 설정
+			String[] meetAge = fb.getMeetAge().split("~");
+			fb.setMinAge(meetAge[0]);
+			fb.setMaxAge(meetAge[1]);
+		}
 		
 		// 모집성별 문구 설정
 		if(fb.getMeetGender().equals("A")) condition += "성별제한 없음";
@@ -153,31 +161,50 @@ public class FeedController {
 	}
 	
 	@RequestMapping("detail.fd")
-	public ModelAndView selectFeedBoard(int bno, ModelAndView mv) {
+	public ModelAndView selectFeedBoard(int bno, ModelAndView mv, Model model) {
 		
 		int result = feedService.increaseCount(bno); // 조회수 증가
 		
+		FeedBoard fb = new FeedBoard();
+		fb.setBoardNo(bno);
+		
 		if(result > 0) {
-			FeedBoard fb = new FeedBoard();
-			String bType = feedService.selectBoardType(bno); // 게시글 타입(G/M) 받아오기
+			fb.setBoardType(feedService.selectBoardType(bno)); // 게시글 타입(G/M) 받아오기
 			
 			// 일반글일 경우
-			if(bType.equals("G")) { 
-				fb = feedService.selectGeneralBoard(bno);
-				mv.addObject("fb", fb).setViewName("feed/feedGeneralDetailView");
-				
+			if(fb.getBoardType().equals("G")) mv.setViewName("feed/feedGeneralDetailView");
 			// 모임모집글일 경우
-			} else { 
-				fb = feedService.selectMeetBoard(bno);
-				setMeetCondition(fb); // 모집조건 텍스트 설정
-				mv.addObject("fb", fb).setViewName("feed/feedMeetDetailView");
-			}
+			else mv.setViewName("feed/feedMeetDetailView");
 			
 		} else {
 			mv.addObject("errorMsg", "상세조회 실패").setViewName("common/errorPage");
 		}
 		
+		mv.addObject("fb", fb)
+		  .addObject("rList", feedService.selectRegionList());
 		return mv;
+	}
+	
+	@RequestMapping("selectBoard.fd")
+	public String selectBoard(int boardNo, Model model) {
+		
+		FeedBoard fb = new FeedBoard();
+		String bType = feedService.selectBoardType(boardNo); //게시글 타입(G/M) 받아오기
+		
+		// 일반글일 경우
+		if(bType.equals("G")) { 
+			fb = feedService.selectGeneralBoard(boardNo);
+			model.addAttribute("fb", fb);
+			return "feed/ajaxGeneralBoard";
+			
+		// 모임모집글일 경우
+		} else { 
+			fb = feedService.selectMeetBoard(boardNo);
+			setMeetCondition(fb); // 모집조건 텍스트 설정
+			model.addAttribute("fb", fb);
+			return "feed/ajaxMeetBoard";
+		}
+		
 	}
 	
 	@RequestMapping("delete.fd")
@@ -204,5 +231,11 @@ public class FeedController {
 	@RequestMapping("deleteLike.fd")
 	public String ajaxDeleteLike(Likes like) {
 		return feedService.deleteLike(like) > 0 ? "success" : "fail";
+	}
+	
+	@ResponseBody
+	@RequestMapping("checkLike.fd")
+	public String ajaxCheckLike(Likes like) {
+		return feedService.checkLike(like) > 0 ? "Y" : "N";
 	}
 }

@@ -69,5 +69,7 @@ public interface FeedService {
 	int insertLike(Likes like);
 	// 좋아요 삭제
 	int deleteLike(Likes like);
+	// 좋아요 확인
+	int checkLike(Likes like);
 	
 }
