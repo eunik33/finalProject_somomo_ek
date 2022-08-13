@@ -111,47 +111,53 @@ public class FeedController {
 		fb.setMeetCondition(condition);
 	}
 	
-	@RequestMapping("insert.fd")
-	public String enrollForm(FeedBoard fb, MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
+	@RequestMapping("insertG.fd")
+	public String enrollGeneralForm(FeedBoard fb, MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
 		
-		int result = 0;
 		
-		// 일반글일 경우 (General)
-		if(fb.getBoardType().equals("G")) { 
-			ArrayList<Attachment> fatList = new ArrayList<>();
+		ArrayList<Attachment> fatList = new ArrayList<>();
+		
+		Iterator<String> fileNames = mtfRequest.getFileNames(); // name 전부 받아오기 (file1, file2, file3, file4)
+		
+		while(fileNames.hasNext()) { // file1 ~ file4
 			
-			Iterator<String> fileNames = mtfRequest.getFileNames(); // name 전부 받아오기 (file1, file2, file3, file4)
+			String file = fileNames.next(); // file 하나씩 접근해서
 			
-			while(fileNames.hasNext()) { // file1 ~ file4
+			MultipartFile upfile = mtfRequest.getFile(file); // 실제 파일 객체 뽑아오기
+			
+			if(!upfile.getOriginalFilename().equals("")) { // 실제로 파일이 첨부됐을 경우
 				
-				String file = fileNames.next(); // file 하나씩 접근해서
+				// 지정경로에 해당 파일을 저장하고 원본명,수정명(경로+파일수정명) 반환받음
+				HashMap<String, String> map = FileRename.saveFile(upfile, session, "img/feedUploadFiles");
 				
-				MultipartFile upfile = mtfRequest.getFile(file); // 실제 파일 객체 뽑아오기
-				
-				if(!upfile.getOriginalFilename().equals("")) { // 실제로 파일이 첨부됐을 경우
-					
-					// 지정경로에 해당 파일을 저장하고 원본명,수정명(경로+파일수정명) 반환받음
-					HashMap<String, String> map = FileRename.saveFile(upfile, session, "img/feedUploadFiles");
-					
-		            Attachment at = new Attachment();
-		            at.setOriginName(map.get("originName"));
-		            at.setChangeName(map.get("changeName"));
-		            fatList.add(at);
-				}
+	            Attachment at = new Attachment();
+	            at.setOriginName(map.get("originName"));
+	            at.setChangeName(map.get("changeName"));
+	            fatList.add(at);
 			}
-
-			result = feedService.insertGeneralBoard(fb, fatList);
-			
-		// 모임모집글일 경우 (Meet)
-		} else { 
-			fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
-			
-			if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
-				fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
-			}
-			
-			result = feedService.insertMeetBoard(fb);
 		}
+
+		int result = feedService.insertGeneralBoard(fb, fatList);
+		
+		if(result > 0) {
+			return "redirect:main.fd";
+		} else {
+			model.addAttribute("errorMsg", "게시글 작성 실패");
+			return "common/errorPage";
+		}
+	}
+	
+	@RequestMapping("insertM.fd")
+	public String enrollMeetForm(FeedBoard fb, HttpSession session, Model model) {
+		
+		fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
+		
+		if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
+			fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
+		}
+		
+		int result = feedService.insertMeetBoard(fb);
+
 		
 		if(result > 0) {
 			return "redirect:main.fd";
@@ -164,18 +170,44 @@ public class FeedController {
 	@RequestMapping("detail.fd")
 	public ModelAndView selectFeedBoard(int boardNo, ModelAndView mv, Model model) {
 		
+//		int result = feedService.increaseCount(boardNo); // 조회수 증가
+//		
+//		FeedBoard fb = new FeedBoard();
+//		fb.setBoardNo(boardNo);
+//		
+//		if(result > 0) {
+//			fb.setBoardType(feedService.selectBoardType(boardNo)); // 게시글 타입(G/M) 받아오기
+//			
+//			// 일반글일 경우
+//			if(fb.getBoardType().equals("G")) mv.setViewName("feed/feedGeneralDetailView");
+//			// 모임모집글일 경우
+//			else mv.setViewName("feed/feedMeetDetailView");
+//			
+//		} else {
+//			mv.addObject("errorMsg", "상세조회 실패").setViewName("common/errorPage");
+//		}
+//		
+//		mv.addObject("fb", fb)
+//		  .addObject("rList", feedService.selectRegionList());
+//		return mv;
 		int result = feedService.increaseCount(boardNo); // 조회수 증가
 		
 		FeedBoard fb = new FeedBoard();
-		fb.setBoardNo(boardNo);
 		
 		if(result > 0) {
-			fb.setBoardType(feedService.selectBoardType(boardNo)); // 게시글 타입(G/M) 받아오기
+			String bType = feedService.selectBoardType(boardNo); // 게시글 타입(G/M) 받아오기
 			
 			// 일반글일 경우
-			if(fb.getBoardType().equals("G")) mv.setViewName("feed/feedGeneralDetailView");
+			if(bType.equals("G")) { 
+				fb = feedService.selectGeneralBoard(boardNo);
+				mv.setViewName("feed/feedGeneralDetailView");
+				
 			// 모임모집글일 경우
-			else mv.setViewName("feed/feedMeetDetailView");
+			} else { 
+				fb = feedService.selectMeetBoard(boardNo);
+				setMeetCondition(fb); // 모집조건 텍스트 설정
+				mv.setViewName("feed/feedMeetDetailView");
+			}
 			
 		} else {
 			mv.addObject("errorMsg", "상세조회 실패").setViewName("common/errorPage");
@@ -208,32 +240,19 @@ public class FeedController {
 		
 	}
 	
-	@RequestMapping("update.fd")
-	public String updateBoard(FeedBoard fb, MultipartHttpServletRequest mtfRequest, HttpSession session, Model model) {
-		int result = 0;
+	@ResponseBody
+	@RequestMapping("updateM.fd")
+	public String updateBoard(FeedBoard fb, HttpSession session, Model model) {
 
-		// 일반글일 경우 (General)
-		if(fb.getBoardType().equals("G")) { 
-
-			//result = feedService.updateGeneralBoard(fb);
-			
-		// 모임모집글일 경우 (Meet)
-		} else { 
-			fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
-			
-			if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
-				fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
-			}
-			
-			result = feedService.updateMeetBoard(fb);
+		fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
+		
+		if(fb.getMeetAge().equals("selectAge")) { // 모집나이 직접 입력했을 시
+			fb.setMeetAge(fb.getMinAge() + "~" + fb.getMaxAge()); // 20~30 형태로 저장
 		}
 		
-		if(result > 0) {
-			return "redirect:detail.fd?boardNo="+fb.getBoardNo();
-		} else {
-			model.addAttribute("errorMsg", "게시글 수정 실패");
-			return "common/errorPage";
-		}
+		int result = feedService.updateMeetBoard(fb);
+
+		return result > 0 ? "success" : "fail";
 	}
 	
 	@ResponseBody
@@ -302,5 +321,12 @@ public class FeedController {
 	@RequestMapping("countLike.fd")
 	public int ajaxCountLikes(int boardNo) {
 		return feedService.countLike(boardNo);
+	}
+	
+	@RequestMapping("joinChat")
+	public String joinChat(int boardNo, String userId) {
+		
+		
+		return "redirect:main.fd";
 	}
 }

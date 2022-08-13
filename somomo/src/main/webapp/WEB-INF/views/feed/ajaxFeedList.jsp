@@ -21,7 +21,16 @@
 						<%------- 작성자 프로필, 날짜, 수정/삭제버튼  ---------%>
 						<table class="fd-board-writer-date">
 							<tr>
-								<td rowspan="2" class="profileImg-area"><img class="profileImg" src="resources/img/test1.jpg" style="width:100%;"></td>
+								<td rowspan="2" class="profileImg-area">
+									<c:choose>
+										<c:when test="${fb.profileImg ne null}">
+											<img class="profileImg" src="${fb.profileImg}" style="width:100%;">
+										</c:when>
+										<c:otherwise>
+											<img class="profileImg" src="resources/img/member/profile_img.png" style="width:100%;">
+										</c:otherwise>
+									</c:choose>
+								</td>
 								<td>${f.nickname}</td>
 								<td align="right">
 									<div class="dropdown">
@@ -86,7 +95,16 @@
 		           		</div>
 			        	<table class="fd-board-writer-date">
 							<tr>
-								<td rowspan="2" class="profileImg-area"><img class="profileImg" src="resources/img/test1.jpg" style="width:100%;"></td>
+								<td rowspan="2" class="profileImg-area">
+									<c:choose>
+										<c:when test="${fb.profileImg ne null}">
+											<img class="profileImg" src="${fb.profileImg}" style="width:100%;">
+										</c:when>
+										<c:otherwise>
+											<img class="profileImg" src="resources/img/member/profile_img.png" style="width:100%;">
+										</c:otherwise>
+									</c:choose>
+								</td>
 								<td>${f.nickname}</td>
 								<td align="right">
 									<div class="dropdown">

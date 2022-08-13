@@ -21,6 +21,16 @@ profile.addEventListener('click', function() {
     dropdownProfile.classList.toggle('show');
 })
 
+
+// 피드 DROPDOWN
+
+const feed = document.querySelector('.feed');
+const dropdownFeed = feed.querySelector('.feed-link');
+
+feed.addEventListener('click', function() {
+    dropdownFeed.classList.toggle('show');
+})
+
 // 윈도우 화면에서 다른곳 클릭했을 때 닫히게 하기
 
 window.addEventListener('click', function(e){

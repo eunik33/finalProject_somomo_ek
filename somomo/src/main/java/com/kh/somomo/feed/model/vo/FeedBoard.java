@@ -39,6 +39,7 @@ public class FeedBoard {
 	
 	// MEMBER테이블과 JOIN해서 받아온 값
 	private String nickname; // 작성자 닉네임
+	private String profileImg; // 작성자 프로필사진
 	
 	// REPLY테이블과 JOIN해서 받아온 값
 	private int countReply; // 댓글 수

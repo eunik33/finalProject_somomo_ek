@@ -20,6 +20,7 @@
 		<result column="MEET_AGE" property="meetAge" />
 		<result column="REGION_NAME" property="regionName" />
 		<result column="NICKNAME" property="nickname" />
+		<result column="PROFILE_IMG" property="profileImg" />
 		<result column="COUNT_REPLY" property="countReply" />
 		<result column="COUNT_MEMBER" property="countMember" />
 		<result column="LIKE_CHECK" property="likeCheck" />
@@ -63,6 +64,7 @@
 		       MEET_AGE,
 		       REGION_NAME,
 		       NICKNAME,
+		       PROFILE_IMG,
                NVL(COUNT_REPLY, 0) AS COUNT_REPLY,
                COUNT_MEMBER,
                LIKE_CHECK
@@ -271,7 +273,8 @@
 		       BOARD_CONTENT,
 		       TO_CHAR(BOARD_DATE, 'YYYY-MM-DD HH24:MI') AS BOARD_DATE,
 		       REGION_NAME,
-		       NICKNAME
+		       NICKNAME,
+		       PROFILE_IMG
 		  FROM
 		       FEED_BOARD F
 		  JOIN 
@@ -313,6 +316,7 @@
 		       MEET_AGE,
 		       REGION_NAME,
 		       NICKNAME,
+		       PROFILE_IMG,
 		       COUNT_MEMBER,
 		       NVL(COUNT_LIKE, 0) AS COUNT_LIKE
 		  FROM
