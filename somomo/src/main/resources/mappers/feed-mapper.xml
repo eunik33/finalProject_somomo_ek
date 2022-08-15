@@ -25,6 +25,7 @@
 		<result column="COUNT_MEMBER" property="countMember" />
 		<result column="LIKE_CHECK" property="likeCheck" />
 		<result column="COUNT_LIKE" property="countLike" />
+		<result column="ROOM_NO" property="roomNo" />
 	</resultMap>
 	
 	<resultMap id="regionCategoryResultSet" type="regionCategory">
@@ -187,7 +188,7 @@
 		       )
 	</insert>
 	
-	<insert id="insertChatMember" parameterType="String">
+	<insert id="insertChatAdmin" parameterType="String">
 		INSERT 
 		  INTO 
 		       CHAT_MEMBER
@@ -318,7 +319,8 @@
 		       NICKNAME,
 		       PROFILE_IMG,
 		       COUNT_MEMBER,
-		       NVL(COUNT_LIKE, 0) AS COUNT_LIKE
+		       NVL(COUNT_LIKE, 0) AS COUNT_LIKE,
+		       ROOM_NO
 		  FROM
 		       FEED_BOARD F
 		  JOIN 
@@ -428,4 +430,50 @@
 		 WHERE 
 		       BOARD_NO = #{boardNo}	       
 	</select>
+	
+	<select id="checkChatMember" parameterType="chatMember" resultType="_int">
+		SELECT
+		       COUNT(*) 
+		  FROM
+		       CHAT_MEMBER 
+		 WHERE
+		       ROOM_NO = #{roomNo}
+		   AND
+		       USER_ID = #{userId}
+	</select>
+	
+	<select id="selectMeetTotal" parameterType="_int" resultType="_int">
+		SELECT 
+		       MEET_TOTAL
+		  FROM 
+		       FEED_BOARD
+		 WHERE
+		       BOARD_NO = #{boardNo}
+	</select>
+	
+	<select id="selectCountMember" parameterType="_int" resultType="_int">
+		SELECT 
+		       COUNT(*)
+		  FROM 
+		       CHAT_MEMBER
+		 GROUP 
+		    BY ROOM_NO
+		HAVING
+		       ROOM_NO = #{roomNo}
+	</select>
+	
+	<insert id="insertChatMember" parameterType="chatMember">
+		INSERT 
+		  INTO 
+		       CHAT_MEMBER
+		       (
+		       ROOM_NO,
+		       USER_ID
+		       )
+		VALUES 
+		       (
+		       #{roomNo},
+		       #{userId}
+		       )
+	</insert>
 </mapper>
