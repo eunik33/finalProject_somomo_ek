@@ -3,6 +3,7 @@ package com.kh.somomo.feed.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.kh.somomo.chat.model.vo.ChatMember;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
@@ -43,6 +44,12 @@ public interface FeedService {
 	ArrayList<Attachment> selectAttachmentList(int boardNo);
 	// 모임모집글 조회
 	FeedBoard selectMeetBoard(int boardNo);
+	// 채팅 멤버 확인
+	int checkChatMember(ChatMember cm);
+	// 채팅 공석 확인
+	boolean checkChatMemberSpace(int boardNo, int roomNo);
+	// 채팅방 멤버 추가
+	int insertChatMember(ChatMember cm);
 	
 	//------- 게시글 수정/삭제 서비스 -------//
 	// 게시글 내용 수정

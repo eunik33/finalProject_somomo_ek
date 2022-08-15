@@ -46,6 +46,7 @@ public class FeedBoard {
 	
 	// CHAT_ROOM, CHAT_MEMBER테이블과 JOIN해서 받아온 값
 	private int countMember; // (채팅)참여자 수
+	private int roomNo; // 채팅방 번호
 	
 	// FEED_LIKES테이블과 JOIN해서 받아온 값
 	private String likeCheck; // 좋아요 클릭 여부

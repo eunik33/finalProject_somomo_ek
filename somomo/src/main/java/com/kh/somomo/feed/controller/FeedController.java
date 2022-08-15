@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
+import com.kh.somomo.chat.model.vo.ChatMember;
+import com.kh.somomo.chat.model.vo.ChatRoom;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
@@ -140,6 +142,7 @@ public class FeedController {
 		int result = feedService.insertGeneralBoard(fb, fatList);
 		
 		if(result > 0) {
+			//session.setAttribute("alertMsg", "게시글 작성 성공");
 			return "redirect:main.fd";
 		} else {
 			model.addAttribute("errorMsg", "게시글 작성 실패");
@@ -160,6 +163,7 @@ public class FeedController {
 
 		
 		if(result > 0) {
+			//session.setAttribute("alertMsg", "게시글 작성 성공");
 			return "redirect:main.fd";
 		} else {
 			model.addAttribute("errorMsg", "게시글 작성 실패");
@@ -168,28 +172,8 @@ public class FeedController {
 	}
 	
 	@RequestMapping("detail.fd")
-	public ModelAndView selectFeedBoard(int boardNo, ModelAndView mv, Model model) {
+	public ModelAndView selectFeedBoard(int boardNo, ModelAndView mv) {
 		
-//		int result = feedService.increaseCount(boardNo); // 조회수 증가
-//		
-//		FeedBoard fb = new FeedBoard();
-//		fb.setBoardNo(boardNo);
-//		
-//		if(result > 0) {
-//			fb.setBoardType(feedService.selectBoardType(boardNo)); // 게시글 타입(G/M) 받아오기
-//			
-//			// 일반글일 경우
-//			if(fb.getBoardType().equals("G")) mv.setViewName("feed/feedGeneralDetailView");
-//			// 모임모집글일 경우
-//			else mv.setViewName("feed/feedMeetDetailView");
-//			
-//		} else {
-//			mv.addObject("errorMsg", "상세조회 실패").setViewName("common/errorPage");
-//		}
-//		
-//		mv.addObject("fb", fb)
-//		  .addObject("rList", feedService.selectRegionList());
-//		return mv;
 		int result = feedService.increaseCount(boardNo); // 조회수 증가
 		
 		FeedBoard fb = new FeedBoard();
@@ -218,8 +202,8 @@ public class FeedController {
 		return mv;
 	}
 	
-	@RequestMapping("selectBoard.fd")
-	public String ajaxSelectBoard(int boardNo, Model model) {
+	@RequestMapping("selectNewBoard.fd")
+	public String ajaxSelectNewBoard(int boardNo, Model model) {
 		
 		FeedBoard fb = new FeedBoard();
 		String bType = feedService.selectBoardType(boardNo); //게시글 타입(G/M) 받아오기
@@ -242,7 +226,7 @@ public class FeedController {
 	
 	@ResponseBody
 	@RequestMapping("updateM.fd")
-	public String updateBoard(FeedBoard fb, HttpSession session, Model model) {
+	public String updateBoard(FeedBoard fb, Model model) {
 
 		fb.setMeetDate(fb.getMeetDate().replace("T", " ")); // 2022-08-05T15:33에서 T를 공백으로 대체
 		
@@ -291,7 +275,7 @@ public class FeedController {
 					new File(session.getServletContext().getRealPath(at.getChangeName())).delete(); // 실제 파일 삭제
 				}
 			}
-			session.setAttribute("alertMsg", "게시글 삭제 성공");
+			//session.setAttribute("alertMsg", "게시글 삭제 성공");
 			return "redirect:main.fd";
 		} else {
 			model.addAttribute("errorMsg", "게시글 삭제 실패");
@@ -323,10 +307,30 @@ public class FeedController {
 		return feedService.countLike(boardNo);
 	}
 	
-	@RequestMapping("joinChat")
-	public String joinChat(int boardNo, String userId) {
+	@ResponseBody
+	@RequestMapping("checkChatMember.fd")
+	public String ajaxCheckChatMember(ChatMember cm) {
+		return feedService.checkChatMember(cm) > 0 ? "Y" : "N";
+	}
+	
+	@RequestMapping("joinChat.fd")
+	public String joinChat(int boardNo, ChatMember cm, HttpSession session, Model model) {
 		
-		
-		return "redirect:main.fd";
+		boolean isJoinAvailable = feedService.checkChatMemberSpace(boardNo, cm.getRoomNo());
+		if(isJoinAvailable) {
+			int result = feedService.insertChatMember(cm);
+			
+			if(result > 0) {
+				// 채팅 개발 후 경로 설정 필요
+				session.setAttribute("alertMsg", "FeedController(joinChat.fd) : 해당 채팅방으로 경로 설정 필요");
+				return "redirect:main.fd";
+			} else {
+				model.addAttribute("errorMsg", "게시글 삭제 실패");
+				return "common/errorPage";
+			}
+		} else {
+			session.setAttribute("alertMsg", "모임 정원이 초과됐습니다.");
+			return "redirect:detail.fd?boardNo=" + boardNo;
+		}
 	}
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.somomo.chat.model.vo.ChatMember;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
@@ -55,8 +56,8 @@ public class FeedDao {
 		return sqlSession.insert("feedMapper.insertChatRoom", boardTitle);
 	}
 
-	public int insertChatMember(SqlSessionTemplate sqlSession, String boardWriter) {
-		return sqlSession.insert("feedMapper.insertChatMember", boardWriter);
+	public int insertChatAdmin(SqlSessionTemplate sqlSession, String boardWriter) {
+		return sqlSession.insert("feedMapper.insertChatAdmin", boardWriter);
 	}
 
 	public int increaseCount(SqlSessionTemplate sqlSession, int boardNo) {
@@ -106,6 +107,23 @@ public class FeedDao {
 	public int countLike(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.selectOne("feedMapper.countLike", boardNo);
 	}
+	
+	public int checkChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
+		return sqlSession.selectOne("feedMapper.checkChatMember", cm);
+	}
+
+	public int selectMeetTotal(SqlSessionTemplate sqlSession, int roomNo) {
+		return sqlSession.selectOne("feedMapper.selectMeetTotal",roomNo);
+	}
+
+	public int selectCountMember(SqlSessionTemplate sqlSession, int roomNo) {
+		return sqlSession.selectOne("feedMapper.selectCountMember", roomNo);
+	}
+
+	public int insertChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
+		return sqlSession.insert("feedMapper.insertChatMember", cm);
+	}
+
 
 
 }

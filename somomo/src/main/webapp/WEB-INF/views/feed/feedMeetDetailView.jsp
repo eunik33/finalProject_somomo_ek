@@ -165,7 +165,7 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
-							<td>${fb.boardWriter}</td>
+							<td>${fb.nickname}</td>
 							<td align="right">
 								<div class="form-icon">
 									<i class='bx bx-dots-vertical-rounded feed'>
@@ -213,19 +213,21 @@
 					</div>
 					<div class="fdm">${fb.countMember}명 참여중</div>
 				
-					<c:choose>
-						<c:when test="${fb.countMember lt fb.meetTotal}">
-							<button type="button" data-toggle="modal" data-target="#joinChatModal" class="btnPink">모임 참여</button>
-						</c:when>
-						<c:otherwise>
-							<button type="button" class="btnDisabled" disabled>마감되었습니다</button>
-						</c:otherwise>
-					</c:choose>	
+					<div class="joinChatBtn">
+						<c:choose>
+							<c:when test="${fb.countMember lt fb.meetTotal}">
+								<button type="button" data-toggle="modal" data-target="#joinChatModal" class="btnPink">모임 참여 신청</button>
+							</c:when>
+							<c:otherwise>
+								<button type="button" class="btnDisabled" disabled>마감되었습니다</button>
+							</c:otherwise>
+						</c:choose>
+					</div>
 				</div>
 			</div>
 		</div>
 	
-         
+        <!-- 게시글 삭제용으로 사용 --> 
 		<form action="" method="post" id="postForm">
      		<input type="hidden" name="boardNo" value="">
      	</form>
@@ -235,17 +237,19 @@
         	$(function(){
         		// 좋아요 등록 여부 확인
         		checkLike();
+        		// 모임 참여자 여부 확인
+        		checkChatMember();
         	});
         	
-       		// 좋아요 버튼 클릭 시
+       		// 좋아요(찜) 버튼 클릭 시
        		$(document).on('click', '.likeBtn', function(){
-					changeLike(this);		
+				changeLike(this); // 좋아요(찜) 사진 변경		
        		});
 
        		// (게시글)수정 버튼 클릭 시
 			$(document).on('click', '.updateMeetBoard', function(){
-				setModalContent();
-				$('#updateMeetBoardModal').modal('toggle');
+				setModalContent(); // 수정 모달창 내용 세팅
+				$('#updateMeetBoardModal').modal('toggle'); // 수정 모당창 띄우기
 			});
                		
 			// (게시글)삭제 버튼 클릭 시
@@ -263,8 +267,8 @@
         			url : 'checkLike.fd',
         			method : 'POST',
         			data : {
-        				userId : '${loginUser.userId}',
-        				boardNo : '${fb.boardNo}'
+        				boardNo : '${fb.boardNo}',
+        				userId : '${loginUser.userId}'
         			},
         			success : function(result){
         				if(result == 'Y'){
@@ -281,6 +285,33 @@
         		});
     		}
     		
+        	// ajax 모임 참여자 여부 확인
+        	function checkChatMember(){
+        		$.ajax({
+        			url : 'checkChatMember.fd',
+        			method : 'POST',
+        			data : {
+        				roomNo : '${fb.roomNo}',
+        				userId : '${loginUser.userId}'
+        			},
+        			success : function(result){
+        				if(result == 'Y'){
+        					$('.joinChatBtn').html('<button type="button" class="btnPink" onclick="moveChat();">채팅 입장</button>');
+        				}
+        			},
+        			error : function(){
+        				console.log('에러');
+        			}
+        		});
+        	}
+        	
+        	// 채팅방으로 이동
+        	function moveChat(){
+        		// 채팅 개발 후 경로 설정 필요
+        		alert('feedMeetDetailView.jsp : 해당 채팅방으로 경로 설정 필요');
+        		location.href = '#';
+        	}
+        	
 			// ajax 좋아요 클릭 이벤트 (등록/취소)
      		function changeLike(likeImg){
 
@@ -293,8 +324,8 @@
 	         			url : 'insertLike.fd',
 	         			method : 'POST',
 	         			data : { 
-	         				userId : '${loginUser.userId}',
-	         				boardNo : '${fb.boardNo}'
+	        				boardNo : '${fb.boardNo}',
+	        				userId : '${loginUser.userId}'
 	         			},
 	         			success : function(result){
 	         				if(result == 'success'){
@@ -318,8 +349,8 @@
 	         		$.ajax({
 	         			url : 'deleteLike.fd',
 	         			data : { 
-	         				boardNo : '${fb.boardNo}',
-	         				userId : '${loginUser.userId}'
+	        				boardNo : '${fb.boardNo}',
+	        				userId : '${loginUser.userId}'
 	         			},
 	         			success : function(result){
 	         				if(result == 'success'){
@@ -386,7 +417,7 @@
             	// ajax 게시글 수정 후 새로 정보 가져오기
             	function selectMeetBoard(){
             		$.ajax({
-            			url : 'selectBoard.fd',
+            			url : 'selectNewBoard.fd',
             			method : 'POST',
             			data : {
             				boardNo : '${fb.boardNo}'
@@ -543,9 +574,10 @@
 					</div>
 								
 					<div class="modal-body" align="center">
-						<form action="joinChat" method="post">
+						<form action="joinChat.fd" method="post">
 							<input type="hidden" name="boardNo" value="${fb.boardNo}">
-						<input type="hidden" name="userId" value="${loginUser.userId}">
+							<input type="hidden" name="roomNo" value="${fb.roomNo}">
+							<input type="hidden" name="userId" value="${loginUser.userId}">
 									
 							<div><b>모임에 참여하면 그룹 채팅방에서 대화할 수 있어요</b></div>
 							<div>구체적인 약속, 장소, 날짜 등을 함께 정해보세요.</div>

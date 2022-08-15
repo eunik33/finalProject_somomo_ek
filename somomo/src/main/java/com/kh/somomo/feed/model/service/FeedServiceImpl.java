@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kh.somomo.chat.model.vo.ChatMember;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
@@ -62,7 +63,7 @@ public class FeedServiceImpl implements FeedService{
 	public int insertMeetBoard(FeedBoard fb) {
 		int result1 = feedDao.insertMeetBoard(sqlSession, fb);
 		int result2 = feedDao.insertChatRoom(sqlSession, fb.getBoardTitle());
-		int result3 = feedDao.insertChatMember(sqlSession, fb.getBoardWriter());
+		int result3 = feedDao.insertChatAdmin(sqlSession, fb.getBoardWriter());
 		return result1 * result2 * result3;
 	}
 	
@@ -160,10 +161,25 @@ public class FeedServiceImpl implements FeedService{
 	public int countLike(int boardNo) {
 		return feedDao.countLike(sqlSession, boardNo);
 	}
+	
+	@Override
+	public int checkChatMember(ChatMember cm) {
+		return feedDao.checkChatMember(sqlSession, cm);
+	}
 
 	@Override
-	public int checkChatMember(String userId) {
-		return 0;
+	public boolean checkChatMemberSpace(int boardNo, int roomNo) {
+		
+		int meetTotal = feedDao.selectMeetTotal(sqlSession, boardNo);
+		int countMember = feedDao.selectCountMember(sqlSession, roomNo);
+		
+		if(countMember < meetTotal) return true;
+		else return false;
+	}
+
+	@Override
+	public int insertChatMember(ChatMember cm) {
+		return feedDao.insertChatMember(sqlSession, cm);
 	}
 
 
