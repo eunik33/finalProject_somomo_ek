@@ -7,7 +7,8 @@
 <meta charset="UTF-8">
 <title>로그인</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<!-- 카카오로그인 -->
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <style>
 	body{
 		width : 100%;
@@ -136,14 +137,24 @@
 		<div class="hr-sect">또는</div>
 		
 		<div class="kakaoBtn">
-			<img src="resources/img/kakao_loginBtn.png" alt="카카오" onclick="qwer();">
+			<img src="resources/img/kakao_loginBtn.png" alt="카카오" onclick="kakaoLogin();">
 		</div>
-		
+	
 		<script>
-			function qwer(){
-				console.log("야야");
-			}
+		  function kakaoLogin() {
+			    $.ajax({
+			        url: 'getKakaoAuthUrl.do',
+			        type: 'get',
+			        async: false,
+			        dataType: 'text',
+			        success: function (url) {
+			            location.href = url;
+			        }
+			    });
+
+			  }
 		</script>
+
 	</div>
 		
 	<div class="enrollForm">

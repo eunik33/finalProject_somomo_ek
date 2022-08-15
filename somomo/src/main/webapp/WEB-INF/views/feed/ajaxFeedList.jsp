@@ -23,8 +23,8 @@
 							<tr>
 								<td rowspan="2" class="profileImg-area">
 									<c:choose>
-										<c:when test="${fb.profileImg ne null}">
-											<img class="profileImg" src="${fb.profileImg}" style="width:100%;">
+										<c:when test="${f.profileImg ne null}">
+											<img class="profileImg" src="${f.profileImg}" style="width:100%;">
 										</c:when>
 										<c:otherwise>
 											<img class="profileImg" src="resources/img/member/profile_img.png" style="width:100%;">
@@ -97,8 +97,8 @@
 							<tr>
 								<td rowspan="2" class="profileImg-area">
 									<c:choose>
-										<c:when test="${fb.profileImg ne null}">
-											<img class="profileImg" src="${fb.profileImg}" style="width:100%;">
+										<c:when test="${f.profileImg ne null}">
+											<img class="profileImg" src="${f.profileImg}" style="width:100%;">
 										</c:when>
 										<c:otherwise>
 											<img class="profileImg" src="resources/img/member/profile_img.png" style="width:100%;">

@@ -9,6 +9,7 @@ public interface MemberService {
 	
 	// 회원가입
 	int insertMember(Member m);
+	int insertKakaoMember(Member m);
 	
 	// 아이디중복체크
 	int idCheck(String checkId);
