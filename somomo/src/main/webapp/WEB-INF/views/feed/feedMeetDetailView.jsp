@@ -330,9 +330,9 @@
 	         			success : function(result){
 	         				if(result == 'success'){
 	         					// 채워진 별로 변경
-	        						$(likeImg).html('<img class="likeY" src="resources/img/star-on.png">');
-	        						// 좋아요(찜) 개수 변경
-	        						checkCountLike();
+        						$(likeImg).html('<img class="likeY" src="resources/img/star-on.png">');
+        						// 좋아요(찜) 개수 변경
+        						checkCountLike();
 	         				}
 	         			},
 	         			error : function(){
@@ -426,6 +426,7 @@
             				// 응답된 문자열은 html형식(feed/ajaxMeetDetail.jsp에 응답내용 있음)
             				$('.board-area').html(data);
             				checkLike();
+            				checkChatMember();
             			},
             			error : function(){
             				console.log('에러');
