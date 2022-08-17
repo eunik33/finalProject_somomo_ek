@@ -73,8 +73,12 @@ public interface FeedService {
 	int insertReReply(Reply reply);
 	// 댓글 수정
 	int updateReply(Reply reply);
+	// 대댓글 존재 여부 확인
+	boolean checkHasRereply(int replyNo);
 	// 댓글 삭제
 	int deleteReply(int replyNo);
+	// 댓글 내용 삭제 (답글 존재하는 댓글일 경우)
+	int deleteReplyContent(int replyNo);
 	
 	//------- 좋아요 서비스 -------//
 	// 좋아요 등록

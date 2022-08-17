@@ -579,5 +579,35 @@
 		       )
 	</insert>
 	
+	<select id="countRereply" parameterType="_int" resultType="_int">
+		SELECT 
+		       COUNT(*)
+		  FROM 
+		       FEED_REPLY
+		 WHERE 
+		       RGROUP = #{replyNo} 
+		   AND 
+		       RDEPTH = 1
+		   AND 
+		       STATUS = 'Y'
+	</select>
+	
+	<update id="deleteReply" parameterType="_int">
+		UPDATE 
+		       FEED_REPLY 
+		   SET 
+		       STATUS = 'N' 
+		 WHERE 
+		       REPLY_NO = #{replyNo}
+	</update>
+	
+	<update id="deleteReplyContent" parameterType="_int">
+		UPDATE 
+		       FEED_REPLY 
+		   SET 
+		       REPLY_CONTENT = NULL 
+		 WHERE 
+		       REPLY_NO = #{replyNo}
+	</update>
 
 </mapper>

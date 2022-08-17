@@ -117,16 +117,13 @@
 		
 		/**************** 댓글 부분 ********************/
         .reply-input-area {
-        	width: 100%
-            height: 60px;
-        }
-        /* 채팅 입력 */
-        .reply-input {
+        	width: 100%;
             height: 50px;
             margin-top: 10px;
         }
-        .reply-input > input {
-            width: 80%;
+
+        .reply-input-area > textarea {
+            width: 78%;
             height: 40px;
             font-size: 12px;
             border-radius: 20px;
@@ -134,19 +131,22 @@
             padding-right: 10px;
             border: none;
             outline: 1px solid var(--border-color);
+            vertical-align:middle;
         }
-        .reply-input > input:focus {
-            outline: 1px solid rgb(255, 146, 139);
+        .reply-input-area > textarea:focus {
+            outline: 1px solid rgb(250,188,186);
         }
-        /* 전송 버튼 */
-        .reply-input > button {
-            width: 40px;
+        /* 작성 버튼 */
+        .reply-input-area > button {
+        	height: 40px;
+            width: 15%;
             color: white;
             font-weight: bold;
             border: none;
             border-radius: 20px;
-            background-color: rgb(255, 146, 139);
+            background-color: rgb(250,188,186);
             margin-left: 10px;
+            vertical-align:middle;
         }
         
         .reply-content-area .replyWrap {
@@ -185,13 +185,13 @@
 		  border-radius: 50%;
 		}
 
-		.commentBox .text {
+		.content-area {
 		  font-size: 13px;
 		  line-height: 1.4;
 		  cursor: pointer;
 		}
 		
-		.commentBox .reply-btn-area {
+		 .reply-btn-area {
 		  display: flex;
 		  position: relative;
 		  vertical-align: top;
@@ -211,9 +211,9 @@
 			margin-right: 5px;
 		}
 
-.reply-replyBtn {
-  margin-left: 10px;
-}
+		.reply-replyBtn {
+		  margin-left: 10px;
+		}
     </style>
 </head>
 <body>
@@ -296,16 +296,19 @@
 					<div class="reply-area">
 						<div id="replyCount">댓글 0개</div>
 		                <div class="reply-input-area">
-	                        <input id="replyContent" type="text" placeholder="댓글을 입력해주세요...">
+	                        <textarea id="replyContent" placeholder="댓글을 입력해주세요..." rows="1" style="resize: none;" ></textarea>
 	                        <button id="replyBtn" onclick="insertReply();">작성</button>
 	               	 	</div>
+	               	 	<!-- ajax 댓글 목록 출력 부분 -->
 	               	 	<div class="reply-content-area">
 
 	               	 	</div>
 					</div>
 				</div>
 			</div>
+		</div>
 	
+
          
 		<form action="" method="post" id="postForm">
      		<input type="hidden" name="boardNo" value="">
@@ -337,11 +340,11 @@
         					// 일반 댓글일 경우
         					if(list[i].rdepth == 0){
 	        					result += '<div id="reply-groupNo' + list[i].rgroup + '">'
-        						        + 	'<div class="replyWrap reply">';
+        						        + 	'<div id="replyNo' + list[i].replyNo + '" class="replyWrap reply">';
         					}
         					// 답글일 경우
         					else{
-        						result += 	'<div class="replyWrap re-reply" style="margin-left:35px;">';
+        						result += 	'<div id="replyNo' + list[i].replyNo + '" class="replyWrap re-reply" style="margin-left:35px;">';
         					}
         					// 공통 부분(작성자, 작성일, 프로필사진, 댓글 내용)
        						result +=			'<div class="writeInfo">' + list[i].nickname + '<span style="margin-left:5px; color:gray;">' + list[i].replyDate + '</span>'
@@ -351,15 +354,15 @@
 		                            +					'</span>'        
 		                            + 				'</a>'
 		                            +			'</div>'
-		                        	+			'<div class="text">'
-		                        	+				list[i].replyContent.replaceAll("\n", "<br/>")
-		                        	+				'<div class="reply-btn-area" data-rno="' + list[i].replyNo + '">';
+		                        	+			'<div class="content-area">'
+		                        	+				'<div class="content">' + list[i].replyContent.replaceAll("\n", "<br/>") + '</div>'
+		                        	+				'<div class="reply-btn-area" data-reply_no="' + list[i].replyNo + '">';
                         	// 일반 댓글일 경우, 답글달기 버튼 표시
                         	if(list[i].rdepth == 0){
                         		result +=				'<button class="rBtn reReplyBtn" data-rgroup="' + list[i].rgroup + '">답글달기</button>';
                         	}
-                        	// 댓글작성자일 경우, 댓글 수정/삭제 버튼 표시
-                            if(list[i].replyWriter == '${loginUser.userId}'){
+                        	// 댓글작성자일 경우, 댓글 수정/삭제 버튼 표시 + 삭제되지 않은 댓글일 경우
+                            if(list[i].replyWriter == '${loginUser.userId}' && list[i].replyContent != '삭제된 댓글입니다'){
                             	result +=				'<button class="rBtn upReplyBtn">수정</button>'
                             			+				'<button class="rBtn delReplyBtn">삭제</button>';
                             }
@@ -395,6 +398,7 @@
 	        				if(result == 'success'){
 	        					selectReplyList();
 	        					$('#replyContent').val('');
+	        					//$(document).scrollTop($(document).height());
 	        				}
 	        			},
 	        			error : function(){
@@ -411,9 +415,9 @@
        		$(document).on('click', '.reReplyBtn', function(){
 				let rgroupNo = $(this).data('rgroup');
 				
-				let reReplyArea = '<div id="inputArea' + rgroupNo + '" class="reReply-input-area" style="margin-left:40px;">'
-			   					+ 	'<input class="reContent" type="text" placeholder="댓글을 입력해주세요...">'
-			   					+ 	'<button class="reReplyBtn" onclick="insertReReply(this,' + rgroupNo +');">작성</button>'
+				let reReplyArea = '<div id="inputArea' + rgroupNo + '" class="reply-input-area" style="margin-left:40px;">'
+			   					+ 	'<textarea class="reContent" type="text" placeholder="댓글을 입력해주세요..." rows="2" style="resize: none;"></textarea>'
+			   					+ 	'<button class="replyBtn" onclick="insertReReply(this,' + rgroupNo +');">작성</button>'
 			  					+ '</div>';
 			  					
 				$('#reply-groupNo' + rgroupNo).append(reReplyArea);
@@ -423,7 +427,7 @@
         	function insertReReply(target, rgroupNo){
         		
 				let inputArea = $(target).parent().attr('id'); // 답글 작성 칸 id
-				let reContent = $(target).siblings('input').val().trim(); // 답글 작성 내용
+				let reContent = $(target).siblings('textarea').val().trim(); // 답글 작성 내용
 
 				if(reContent != ''){
 					$.ajax({
@@ -447,22 +451,42 @@
 				}
 				else {
 					alert('내용을 입력해주세요');
-				}
-
-				
+				}	
         	}
        		
-       		
-       		// 좋아요 버튼 클릭 시
-       		$(document).on('click', '.likeBtn', function(){
-				changeLike(this);		
-       		});
-       		
-       		// 좋아요 버튼 클릭 시
-       		$(document).on('click', '.likeBtn', function(){
-				changeLike(this);		
-       		});
-
+        	
+       		// 댓글 삭제 버튼 클릭 시
+       		$(document).on('click', '.delReplyBtn', function(){
+				let replyNo = $(this).parent().data('reply_no');
+       			let replyContent = $(this).parent().parent().find('.content');
+       			let upReplyBtn = $(this).parent().find('.upReplyBtn');
+       			let delReplyBtn = $(this).parent().find('.delReplyBtn');
+				
+        		if(confirm("댓글을 삭제하시겠습니까?")){
+    				
+        			$.ajax({
+        				url : 'deleteReply.fd',
+        				data : {
+        					replyNo : replyNo
+        				},
+        				success : function(result){
+        					if(result == 'deleteReply'){
+        						$('#replyNo' + replyNo).remove(); // 해당 답변 지우기
+        					}
+        					else if(result == 'deleteContent'){
+        						replyContent.html('삭제된 댓글입니다');
+        						upReplyBtn.attr('style', 'display:none;'); // 해당 댓글수정버튼 숨기기
+        						delReplyBtn.attr('style', 'display:none;'); // 해당 댓글삭제버튼 숨기기
+        					}
+        				},
+        				error : function(){
+        					console.log('에러');
+        				}
+        			});
+    			}
+				
+			});
+        	
        		// (게시글)수정 버튼 클릭 시
 			$(document).on('click', '.updateGeneralBoard', function(){
 				setModalContent();
@@ -476,8 +500,12 @@
     				$('#postForm').attr('action', 'delete.fd').submit();
     			}
 			});	
-    		
-        	
+       		
+       		// 좋아요 버튼 클릭 시
+       		$(document).on('click', '.likeBtn', function(){
+				changeLike(this);		
+       		});
+
         	// ajax 좋아요 등록 여부 확인
     		function checkLike(){
         		$.ajax({
@@ -587,53 +615,57 @@
     					$('#gmRegion option[value=' + data.regionNo +']').attr('selected', true);
     					$('#gmTitle').val(data.boardTitle);
     					$('#gmContent').val(data.boardContent);
+    					
+    					// 첨부파일 세팅 필요 => controller 수정
     				}
     			});
-    			
-            	// ajax 게시글 수정 후 새로 정보 가져오기
-            	function selectMeetBoard(){
-            		$.ajax({
-            			url : 'selectBoard.fd',
-            			method : 'POST',
-            			data : {
-            				boardNo : '${fb.boardNo}'
-            			},
-            			success : function(data){
-            				// 응답된 문자열은 html형식(feed/ajaxMeetDetail.jsp에 응답내용 있음)
-            				$('.board-area').html(data);
-            				checkLike();
-            			},
-            			error : function(){
-            				console.log('에러');
-            			}
-            		});
-            	}
-            	
-           		// 수정 모달창 안에서 글수정 버튼 클릭 시
-           		$(document).on('click', '#updateMeetBtn', function(){
-           			
-           			//var formData = new FormData($('#updateMeetForm')[0]);
-           			//contentType : false,
-           			//processData : false
-           			$.ajax({
-           				url : 'updateM.fd',
-           				method : 'POST',
-           				data : $('#updateMeetForm').serialize(),
-           				success : function(result){
-           					$('#updateMeetBoardModal').modal('hide');
-           					if(result == "success"){
-               					selectMeetBoard();
-           					}
-           					else{
-           						alert('게시글 수정 실패');
-           					}
-           				},
-           				error : function(){
-           					console.log('에러');
-           				}
-           			});
+        	}
+    		/*
+           	// ajax 게시글 수정 후 새로 정보 가져오기
+           	function selectMeetBoard(){
+           		$.ajax({
+           			url : 'selectBoard.fd',
+           			method : 'POST',
+           			data : {
+           				boardNo : '${fb.boardNo}'
+           			},
+           			success : function(data){
+           				// 응답된 문자열은 html형식(feed/ajaxMeetDetail.jsp에 응답내용 있음)
+           				$('.board-area').html(data);
+           				checkLike();
+           			},
+           			error : function(){
+           				console.log('에러');
+           			}
            		});
-    		}
+           	}
+            	
+           	
+         	// 수정 모달창 안에서 글수정 버튼 클릭 시
+         	$(document).on('click', '#updateGeneralBtn', function(){
+         			
+         		//var formData = new FormData($('#updateMeetForm')[0]);
+         		//contentType : false,
+         		//processData : false
+         		$.ajax({
+         			url : 'updateM.fd',
+         			method : 'POST',
+         			data : $('#updateGeneralForm').serialize(),
+         			success : function(result){
+         				$('#updateGeneralBoardModal').modal('hide');
+         				if(result == "success"){
+             				selectMeetBoard();
+         				}
+         				else{
+         					alert('게시글 수정 실패');
+         				}
+         			},
+         			error : function(){
+         				console.log('에러');
+         			}
+         		});
+         	});
+           	*/
 		</script>
 
 

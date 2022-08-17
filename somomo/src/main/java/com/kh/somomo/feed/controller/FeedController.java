@@ -342,6 +342,7 @@ public class FeedController {
 		ArrayList<Reply> rpList = feedService.selectReplyList(boardNo);
 		for(Reply rp : rpList) {
 			if(rp.getProfileImg() == null) rp.setProfileImg("resources/img/member/profile_img.png");
+			if(rp.getReplyContent() == null) rp.setReplyContent("삭제된 댓글입니다");
 		}
 		return new Gson().toJson(rpList);
 	}
@@ -357,4 +358,18 @@ public class FeedController {
 	public String ajaxInsertReReply(Reply reply) {
 		return feedService.insertReReply(reply) > 0 ? "success" : "fail";
 	}
+	
+	@ResponseBody
+	@RequestMapping("deleteReply.fd")
+	public String ajaxDeleteReply(int replyNo) {
+		
+		boolean hasRereply = feedService.checkHasRereply(replyNo);
+		
+		if(hasRereply) {
+			return feedService.deleteReplyContent(replyNo) > 0 ? "deleteContent" : "fail";
+		} else {
+			return feedService.deleteReply(replyNo) > 0 ? "deleteReply" : "fail";
+		}
+	}
+	
 }

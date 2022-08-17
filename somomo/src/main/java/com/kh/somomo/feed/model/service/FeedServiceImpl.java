@@ -146,8 +146,19 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
+	public boolean checkHasRereply(int replyNo) {
+		int countRereply = feedDao.countRereply(sqlSession, replyNo);
+		return countRereply > 0 ? true : false;
+	}
+	
+	@Override
 	public int deleteReply(int replyNo) {
-		return 0;
+		return feedDao.deleteReply(sqlSession, replyNo);
+	}
+	
+	@Override
+	public int deleteReplyContent(int replyNo) {
+		return feedDao.deleteReplyContent(sqlSession, replyNo);
 	}
 
 	@Override

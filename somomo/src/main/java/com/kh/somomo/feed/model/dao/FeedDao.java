@@ -136,6 +136,18 @@ public class FeedDao {
 	public int insertReReply(SqlSessionTemplate sqlSession, Reply reply) {
 		return sqlSession.insert("feedMapper.insertReReply", reply);
 	}
+
+	public int countRereply(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.selectOne("feedMapper.countRereply", replyNo);
+	}
+
+	public int deleteReply(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.update("feedMapper.deleteReply", replyNo);
+	}
+	
+	public int deleteReplyContent(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.update("feedMapper.deleteReplyContent", replyNo);
+	}
 	
 
 
