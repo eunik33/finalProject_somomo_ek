@@ -142,7 +142,7 @@ public class FeedServiceImpl implements FeedService{
 	
 	@Override
 	public int updateReply(Reply reply) {
-		return 0;
+		return feedDao.updateReply(sqlSession, reply);
 	}
 
 	@Override

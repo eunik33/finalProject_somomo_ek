@@ -360,6 +360,12 @@ public class FeedController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("updateReply.fd")
+	public String ajaxUpdateReply(Reply reply) {
+		return feedService.updateReply(reply) > 0 ? "success" : "fail";
+	}
+	
+	@ResponseBody
 	@RequestMapping("deleteReply.fd")
 	public String ajaxDeleteReply(int replyNo) {
 		

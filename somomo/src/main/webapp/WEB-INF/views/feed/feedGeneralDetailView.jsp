@@ -107,9 +107,7 @@
 			font-size: 18px;
 			font-weight: bold;
 		}
-		.sm{
-			display:inline;
-		}
+		
 		.btnPink:hover{
      		background-color: #FEC8C6;
      		border: 1px solid #FEC8C6;
@@ -198,11 +196,11 @@
 		  margin-top: 5px;
 		}
 		
-		.reply-btn-area{
+		.reply-btn-area {
 			margin-top:50x;
 		}
 		
-		.rBtn{
+		.rBtn {
 			font-weight: bold;
 			color: gray;
 			font-size: 13px;
@@ -213,6 +211,11 @@
 
 		.reply-replyBtn {
 		  margin-left: 10px;
+		}
+		
+		#mUpReplyContent {
+			overflow: hidden;
+			resize: none;
 		}
     </style>
 </head>
@@ -258,17 +261,18 @@
 								</c:choose>
 							</td>
 							<td>${fb.nickname}</td>
-							<td align="right">
-								<div class="form-icon">
-									<i class='bx bx-dots-vertical-rounded feed'>
-									<ul class="feed-link">
-										<li><a class="updateGeneralBoard">수정</a></li>
-										<li><a class="checkDelete">삭제</a></li>
-										<li><a href="#">신고(미정)</a></li>
-									</ul>
-									</i>
-								</div>
-							</td>
+							<c:if test="${loginUser.userId eq fb.boardWriter}">
+								<td align="right">
+									<div class="form-icon">
+										<i class='bx bx-dots-vertical-rounded feed'>
+										<ul class="feed-link">
+											<li><a class="updateGeneralBoard">수정</a></li>
+											<li><a class="checkDelete">삭제</a></li>
+										</ul>
+										</i>
+									</div>
+								</td>
+							</c:if>
 						</tr>
 						<tr><td class="fd-board-date">${fb.boardDate}</td></tr>
 					</table>
@@ -309,7 +313,7 @@
 		</div>
 	
 
-         
+        <%-- 게시글 삭제용 (POST방식) --%> 
 		<form action="" method="post" id="postForm">
      		<input type="hidden" name="boardNo" value="">
      	</form>
@@ -323,6 +327,9 @@
         		selectReplyList();
         	});
         	
+        	//-----------------------------------------------
+        	//------------------- 댓글 관련 --------------------
+        	//-----------------------------------------------
         	// ajax 댓글 목록 가져오기
         	function selectReplyList(){
         		$.ajax({
@@ -359,7 +366,7 @@
 		                        	+				'<div class="reply-btn-area" data-reply_no="' + list[i].replyNo + '">';
                         	// 일반 댓글일 경우, 답글달기 버튼 표시
                         	if(list[i].rdepth == 0){
-                        		result +=				'<button class="rBtn reReplyBtn" data-rgroup="' + list[i].rgroup + '">답글달기</button>';
+                        		result +=				'<button class="rBtn reReplyBtn showArea" data-rgroup="' + list[i].rgroup + '">답글달기</button>';
                         	}
                         	// 댓글작성자일 경우, 댓글 수정/삭제 버튼 표시 + 삭제되지 않은 댓글일 경우
                             if(list[i].replyWriter == '${loginUser.userId}' && list[i].replyContent != '삭제된 댓글입니다'){
@@ -386,7 +393,6 @@
         	// ajax 댓글 작성
         	function insertReply(){
         		if($('#replyContent').val().trim() != ''){
-        			
 	        		$.ajax({
 	        			url : 'insertReply.fd',
 	        			data : {
@@ -411,16 +417,28 @@
         		}
         	}
         	
-       		// 답글달기 버튼 클릭 시 => 답글 작성 공간 표시
+       		// 답글버튼(답글달기,답글취소) 클릭 시
        		$(document).on('click', '.reReplyBtn', function(){
+       			
 				let rgroupNo = $(this).data('rgroup');
-				
-				let reReplyArea = '<div id="inputArea' + rgroupNo + '" class="reply-input-area" style="margin-left:40px;">'
-			   					+ 	'<textarea class="reContent" type="text" placeholder="댓글을 입력해주세요..." rows="2" style="resize: none;"></textarea>'
-			   					+ 	'<button class="replyBtn" onclick="insertReReply(this,' + rgroupNo +');">작성</button>'
-			  					+ '</div>';
-			  					
-				$('#reply-groupNo' + rgroupNo).append(reReplyArea);
+				// 답글달기 버튼일 경우
+				if($(this).hasClass('showArea')){
+					let reReplyArea = '<div id="inputArea' + rgroupNo + '" class="reply-input-area" style="margin-left:40px;">'
+				   					+ 	'<textarea class="reContent" type="text" placeholder="댓글을 입력해주세요..." rows="2" style="resize: none;"></textarea>'
+				   					+ 	'<button class="replyBtn" onclick="insertReReply(this,' + rgroupNo +');">작성</button>'
+				  					+ '</div>';
+				  					
+					$('#reply-groupNo' + rgroupNo).append(reReplyArea);
+					
+					$(this).html('답글취소');
+					$(this).removeClass('showArea');
+				}
+				// 답글취소 버튼일 경우
+				else {
+					$('#inputArea' + rgroupNo).remove();
+					$(this).html('답글달기');
+					$(this).addClass('showArea');
+				}
 			});
         	
         	// ajax 답글(대댓글) 작성
@@ -454,26 +472,63 @@
 				}	
         	}
        		
+        	// 댓글 수정 버튼 클릭 시
+        	$(document).on('click', '.upReplyBtn', function(){
+        		
+        		let replyNo = $(this).parent().data('reply_no'); // 해당 댓글 번호
+        		let replyContent = $(this).parent().parent().find('.content').html(); // 해당 댓글 내용
+        		// 댓글 수정 모달창에 값 전달 한 뒤 띄우기
+				$('#mUpReplyNo').val(replyNo);
+        		$('#mUpReplyContent').val(replyContent.replaceAll("<br>", "\n"));
+        		$('#updateReplyModal').modal('toggle');
+        	});
         	
-       		// 댓글 삭제 버튼 클릭 시
+         	// ajax 댓글 수정 모달창 안에서 수정 버튼 클릭 시
+         	$(document).on('click', '#mUpdateReplyBtn', function(){
+         		if($('#mUpReplyContent').val().trim() != ''){
+	         		$.ajax({
+	         			url : 'updateReply.fd',
+	         			method : 'POST',
+	         			data : $('#updateReplyForm').serialize(),
+	         			success : function(result){
+	         				if(result == "success"){
+	         					//!!!!해당 댓글 부분만 변경되게 수정 필요!!!!
+	         					selectReplyList();
+	         				}
+	         				else{
+	         					alert('댓글 수정 실패');
+	         				}
+	         				$('#updateReplyModal').modal('hide');
+	         			},
+	         			error : function(){
+	         				console.log('에러');
+	         			}
+	         		});
+         		}
+         		else{
+         			alert('내용을 입력해주세요');
+         		}
+         	});
+        	
+       		// ajax 댓글 삭제 버튼 클릭 시
        		$(document).on('click', '.delReplyBtn', function(){
-				let replyNo = $(this).parent().data('reply_no');
-       			let replyContent = $(this).parent().parent().find('.content');
-       			let upReplyBtn = $(this).parent().find('.upReplyBtn');
-       			let delReplyBtn = $(this).parent().find('.delReplyBtn');
+       			
+				let replyNo = $(this).parent().data('reply_no'); // 해당 댓글 번호
+       			let replyContent = $(this).parent().parent().find('.content'); // 해당 댓글 내용 요소
+       			let upReplyBtn = $(this).parent().find('.upReplyBtn'); // 해당 댓글수정버튼
+       			let delReplyBtn = $(this).parent().find('.delReplyBtn'); // 해당 댓글삭제버튼
 				
         		if(confirm("댓글을 삭제하시겠습니까?")){
-    				
         			$.ajax({
         				url : 'deleteReply.fd',
         				data : {
         					replyNo : replyNo
         				},
         				success : function(result){
-        					if(result == 'deleteReply'){
+        					if(result == 'deleteReply'){ // 답변 없는 댓글일 경우 => 댓글 삭제 (STATUS='N')
         						$('#replyNo' + replyNo).remove(); // 해당 답변 지우기
         					}
-        					else if(result == 'deleteContent'){
+        					else if(result == 'deleteContent'){ // 답변 달린 댓글일 경우 => 댓글 내용 삭제
         						replyContent.html('삭제된 댓글입니다');
         						upReplyBtn.attr('style', 'display:none;'); // 해당 댓글수정버튼 숨기기
         						delReplyBtn.attr('style', 'display:none;'); // 해당 댓글삭제버튼 숨기기
@@ -484,23 +539,12 @@
         				}
         			});
     			}
-				
 			});
         	
-       		// (게시글)수정 버튼 클릭 시
-			$(document).on('click', '.updateGeneralBoard', function(){
-				setModalContent();
-				$('#updateGeneralBoardModal').modal('toggle');
-			});
-               		
-			// (게시글)삭제 버튼 클릭 시
-			$(document).on('click', '.checkDelete', function(){
-        		if(confirm("삭제하시겠습니까?")){
-    				$('#postForm input[name="boardNo"]').val(${fb.boardNo});
-    				$('#postForm').attr('action', 'delete.fd').submit();
-    			}
-			});	
        		
+			//-----------------------------------------------
+       		//------------------- 좋아요 관련 -------------------
+       		//-----------------------------------------------
        		// 좋아요 버튼 클릭 시
        		$(document).on('click', '.likeBtn', function(){
 				changeLike(this);		
@@ -532,12 +576,9 @@
     		
 			// ajax 좋아요 클릭 이벤트 (등록/취소)
      		function changeLike(likeImg){
-
 				// 기존에 좋아요 안 눌렀을 경우 => 좋아요 등록
 	     		if($(likeImg).children('img').hasClass('likeN')){ 
-	     			
 	     			//console.log('좋아요 등록');
-	         		
 	     			$.ajax({
 	         			url : 'insertLike.fd',
 	         			method : 'POST',
@@ -558,12 +599,9 @@
 	         			}
 	         		});
 	         	}
-	     		
 	     		// 기존에 좋아요 눌렀을 경우 => 좋아요 취소
 	     		else{ 
-	     			
 	     			//console.log('좋아요 취소');
-	     			
 	         		$.ajax({
 	         			url : 'deleteLike.fd',
 	         			data : { 
@@ -603,6 +641,29 @@
     			});
     		}
     		
+        	//------------------------------------------------------
+       		//------------------- 게시글 수정/삭제 관련 -------------------
+       		//------------------------------------------------------
+      		// 게시글 수정/삭제 DROPDOWN
+		    $(document).on('click', '.feed', function(){
+		    	const feed = document.querySelector('.feed');
+		        const dropdownFeed = feed.querySelector('.feed-link');
+		        dropdownFeed.classList.toggle('show');
+		    });
+        	
+       		// (게시글)수정 버튼 클릭 시
+			$(document).on('click', '.updateGeneralBoard', function(){
+				setModalContent(); // 수정 모달창에 기존 게시글 내용 세팅
+				$('#updateGeneralBoardModal').modal('toggle'); // 수정 모달창 띄우기
+			});
+               		
+			// (게시글)삭제 버튼 클릭 시
+			$(document).on('click', '.checkDelete', function(){
+        		if(confirm("삭제하시겠습니까?")){
+    				$('#postForm input[name="boardNo"]').val(${fb.boardNo});
+    				$('#postForm').attr('action', 'delete.fd').submit();
+    			}
+			});	
         	
         	// ajax 수정버튼 클릭 시 모달창 내용 세팅
     		function setModalContent(){
@@ -616,7 +677,7 @@
     					$('#gmTitle').val(data.boardTitle);
     					$('#gmContent').val(data.boardContent);
     					
-    					// 첨부파일 세팅 필요 => controller 수정
+    					// !!!!!!!!!!!!!!!!!!!!첨부파일 세팅 필요 => controller 수정!!!!!!!!!!!!!!!!!!!!!
     				}
     			});
         	}
@@ -667,8 +728,34 @@
          	});
            	*/
 		</script>
-
-
+		
+		<!---------------- 모달창 ---------------->
+		<!------- 댓글 수정 모달 ------->
+		<div class="modal fade" id="updateReplyModal">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					    
+					<div class="modal-header">
+						<h4 class="modal-title w-100 text-center">댓글 수정</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+								
+					<div class="modal-body">
+						<form id="updateReplyForm" method="post">
+							<input type="hidden" id="mUpReplyNo" name="replyNo" value="">
+							
+							<textarea id="mUpReplyContent" name="replyContent" class="form-control" rows="5"></textarea>
+							
+							<div style="margin-top:10px;">
+								<button type="button" id="mUpdateReplyBtn" class="btnPink">수정</button>
+							</div>
+						</form>
+					</div>				
+					
+				</div>
+			</div>
+		</div>
+		
 	    <!------- 일반글 수정 모달 ------->
 		<div class="modal fade" id="updateGeneralBoardModal">
 			<div class="modal-dialog modal-dialog-centered">
@@ -706,7 +793,7 @@
 							</div>
 							
 							<div style="margin-top:10px;">
-								<button type="submit" class="btn btn-block btnPink">글작성</button>
+								<button type="submit" class="btnPink">글작성</button>
 							</div>
 						</form>
 					</div>				
@@ -733,6 +820,8 @@
 		<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
     </div>
     <!-- 오른쪽 사이드 바 끝-->
+    
     <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+    <br><br><br><br>
 </body>
 </html>

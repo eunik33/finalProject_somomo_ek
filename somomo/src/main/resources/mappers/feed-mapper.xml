@@ -579,6 +579,15 @@
 		       )
 	</insert>
 	
+	<update id="updateReply" parameterType="reply">
+		UPDATE
+		       FEED_REPLY
+		   SET
+		       REPLY_CONTENT = #{replyContent}
+		 WHERE
+		       REPLY_NO = #{replyNo}
+	</update>
+	
 	<select id="countRereply" parameterType="_int" resultType="_int">
 		SELECT 
 		       COUNT(*)
