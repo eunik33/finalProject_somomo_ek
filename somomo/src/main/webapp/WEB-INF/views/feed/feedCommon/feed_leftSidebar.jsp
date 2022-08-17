@@ -35,7 +35,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="#">
+					<a href="chat">
 						<i class="uil uil-comment"></i>
 						<span class="link-name">CHAT</span>
 					</a>
@@ -46,11 +46,6 @@
 						<span class="link-name">My Page</span>
 					</a>
 				</li>
-				
-				<div class="fd-enroll-btn-area">
-					<button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-block btnPink">일반글 작성</button>
-           			<button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-block btnPink">모임모집글 작성</button>
-           		</div>
            		
 				<!-- 나중에 margin으로 조절-->
 				<br><br><br><br>

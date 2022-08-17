@@ -20,10 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.kh.somomo.chat.model.vo.ChatMember;
-import com.kh.somomo.chat.model.vo.ChatRoom;
 import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
+import com.kh.somomo.common.model.vo.Reply;
 import com.kh.somomo.common.template.FileRename;
 import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
@@ -180,11 +180,12 @@ public class FeedController {
 		
 		if(result > 0) {
 			String bType = feedService.selectBoardType(boardNo); // 게시글 타입(G/M) 받아오기
-			
+
 			// 일반글일 경우
 			if(bType.equals("G")) { 
 				fb = feedService.selectGeneralBoard(boardNo);
-				mv.setViewName("feed/feedGeneralDetailView");
+				mv.addObject("fatList", feedService.selectAttachmentList(boardNo))
+				  .setViewName("feed/feedGeneralDetailView");
 				
 			// 모임모집글일 경우
 			} else { 
@@ -325,12 +326,35 @@ public class FeedController {
 				session.setAttribute("alertMsg", "FeedController(joinChat.fd) : 해당 채팅방으로 경로 설정 필요");
 				return "redirect:main.fd";
 			} else {
-				model.addAttribute("errorMsg", "게시글 삭제 실패");
+				model.addAttribute("errorMsg", "모임 참여 실패");
 				return "common/errorPage";
 			}
 		} else {
 			session.setAttribute("alertMsg", "모임 정원이 초과됐습니다.");
 			return "redirect:detail.fd?boardNo=" + boardNo;
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="selectReplyList.fd", produces="application/json; charset=UTF-8")
+	public String ajaxSelectReplyList(int boardNo) {
+		
+		ArrayList<Reply> rpList = feedService.selectReplyList(boardNo);
+		for(Reply rp : rpList) {
+			if(rp.getProfileImg() == null) rp.setProfileImg("resources/img/member/profile_img.png");
+		}
+		return new Gson().toJson(rpList);
+	}
+	
+	@ResponseBody
+	@RequestMapping("insertReply.fd")
+	public String ajaxInsertReply(Reply reply) {
+		return feedService.insertReply(reply) > 0 ? "success" : "fail";
+	}
+	
+	@ResponseBody
+	@RequestMapping("insertReReply.fd")
+	public String ajaxInsertReReply(Reply reply) {
+		return feedService.insertReReply(reply) > 0 ? "success" : "fail";
 	}
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.somomo.chat.model.vo.ChatMember;
 import com.kh.somomo.common.model.vo.Attachment;
@@ -46,6 +47,7 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
+	@Transactional
 	public int insertGeneralBoard(FeedBoard fb, ArrayList<Attachment> atList) {
 		
 		int result1 = feedDao.insertGeneralBoard(sqlSession, fb);
@@ -60,6 +62,7 @@ public class FeedServiceImpl implements FeedService{
 	}
 	
 	@Override
+	@Transactional
 	public int insertMeetBoard(FeedBoard fb) {
 		int result1 = feedDao.insertMeetBoard(sqlSession, fb);
 		int result2 = feedDao.insertChatRoom(sqlSession, fb.getBoardTitle());
@@ -124,14 +127,19 @@ public class FeedServiceImpl implements FeedService{
 
 	@Override
 	public ArrayList<Reply> selectReplyList(int boardNo) {
-		return null;
+		return feedDao.selectReplyList(sqlSession, boardNo);
 	}
 
 	@Override
 	public int insertReply(Reply reply) {
-		return 0;
+		return feedDao.insertReply(sqlSession, reply);
 	}
 
+	@Override
+	public int insertReReply(Reply reply) {
+		return feedDao.insertReReply(sqlSession, reply);
+	}
+	
 	@Override
 	public int updateReply(Reply reply) {
 		return 0;

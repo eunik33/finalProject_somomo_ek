@@ -107,9 +107,7 @@
 </head>
 <body>
 	<!--------------------- 왼쪽 사이드 바 ------------------------>
-	<div class="left-sidebar">
-		<jsp:include page="feedCommon/feed_leftSidebar.jsp" />
-	</div>
+	<jsp:include page="feedCommon/feed_leftSidebar.jsp" />
 	<!--------------------- 왼쪽 사이드 바 끝 ------------------------>
 
 	<!----------- 헤더 , 메인 컨텐츠 ---------->
@@ -488,9 +486,7 @@
     </section>
 
     <!------ 오른쪽 사이드 바 --------->
-    <div class="right-sidebar">
-		<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
-    </div>
+	<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
     <!-- 오른쪽 사이드 바 끝-->
 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
 </body>

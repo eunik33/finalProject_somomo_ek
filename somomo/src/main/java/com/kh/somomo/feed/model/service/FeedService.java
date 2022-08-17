@@ -69,6 +69,8 @@ public interface FeedService {
 	ArrayList<Reply> selectReplyList(int boardNo);
 	// 댓글 작성
 	int insertReply(Reply reply);
+	// 답글(대댓글) 작성
+	int insertReReply(Reply reply);
 	// 댓글 수정
 	int updateReply(Reply reply);
 	// 댓글 삭제

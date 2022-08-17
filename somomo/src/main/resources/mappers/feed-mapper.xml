@@ -40,6 +40,18 @@
 		<result column="CHANGE_NAME" property="changeName" />
 	</resultMap>
 	
+	<resultMap id="replyResultSet" type="reply">
+		<result column="REPLY_NO" property="replyNo" />
+		<result column="REPLY_WRITER" property="replyWriter" />
+		<result column="REPLY_CONTENT" property="replyContent" />
+		<result column="RGROUP" property="rgroup" />
+		<result column="RDEPTH" property="rdepth" />
+		<result column="REPLY_DATE" property="replyDate" />
+		<result column="NICKNAME" property="nickname" />
+		<result column="PROFILE_IMG" property="profileImg" />
+		<result column="IS_LAST_RGROUP_REPLY" property="isLastRgroupReply" />
+	</resultMap>
+	
 	<select id="selectFeedListCount" resultType="_int">
 		SELECT 
 		       COUNT(*) 
@@ -82,7 +94,9 @@
                   FROM 
                        FEED_REPLY 
                  GROUP
-                    BY BOARD_NO) USING (BOARD_NO)
+                    BY BOARD_NO, STATUS
+                HAVING
+                       STATUS = 'Y') USING (BOARD_NO)
      LEFT JOIN
                CHAT_ROOM USING(BOARD_NO)
      LEFT JOIN
@@ -275,13 +289,24 @@
 		       TO_CHAR(BOARD_DATE, 'YYYY-MM-DD HH24:MI') AS BOARD_DATE,
 		       REGION_NAME,
 		       NICKNAME,
-		       PROFILE_IMG
+		       PROFILE_IMG,
+		       NVL(COUNT_LIKE, 0) AS COUNT_LIKE
 		  FROM
 		       FEED_BOARD F
 		  JOIN 
 		       REGION_CATEGORY USING (REGION_NO)
 		  JOIN 
 		       MEMBER ON (BOARD_WRITER = USER_ID)
+	 LEFT JOIN
+               (SELECT
+                       COUNT(*) COUNT_LIKE,
+                       BOARD_NO
+                  FROM
+                       FEED_LIKES
+                 GROUP 
+                    BY BOARD_NO
+                HAVING
+                       BOARD_NO = #{boardNo}) USING (BOARD_NO) 
 		 WHERE 
 		       BOARD_NO = #{boardNo}
 		   AND 
@@ -476,4 +501,83 @@
 		       #{userId}
 		       )
 	</insert>
+	
+	<select id="selectReplyList" parameterType="_int" resultMap="replyResultSet">
+		SELECT
+		       REPLY_NO,
+		       REPLY_WRITER,
+		       REPLY_CONTENT,
+		       R.RGROUP,
+		       RDEPTH,
+		       TO_CHAR(REPLY_DATE, 'YYYY-MM-DD HH24:MI') AS REPLY_DATE,
+		       NICKNAME,
+		       PROFILE_IMG,
+		       IS_LAST_RGROUP_REPLY
+		  FROM
+		       FEED_REPLY R
+		  JOIN
+		       MEMBER ON (REPLY_WRITER = USER_ID)
+	 LEFT JOIN
+		       (SELECT 
+		               MAX(REPLY_NO) AS LAST_REPLY_NO,
+		               'Y' AS IS_LAST_RGROUP_REPLY
+		          FROM 
+		               FEED_REPLY
+		         GROUP 
+		            BY RGROUP, STATUS
+		        HAVING 
+		               STATUS='Y') ON (LAST_REPLY_NO = REPLY_NO)
+		 WHERE
+		       BOARD_NO = #{boardNo}
+		   AND
+		       R.STATUS = 'Y'
+		 ORDER 
+            BY RGROUP, RDEPTH, REPLY_NO
+	</select>
+	
+	<insert id="insertReply" parameterType="reply">
+		INSERT
+		  INTO 
+		       FEED_REPLY
+		       (
+		       REPLY_NO,
+		       BOARD_NO,
+		       REPLY_WRITER,
+		       REPLY_CONTENT,
+		       RGROUP
+		       )
+		VALUES
+		       (
+		       SEQ_FRNO.NEXTVAL,
+		       #{boardNo},
+		       #{replyWriter},
+		       #{replyContent},
+		       SEQ_FRNO.CURRVAL
+		       )
+	</insert>
+	
+	<insert id="insertReReply" parameterType="reply">
+		INSERT
+		  INTO 
+		       FEED_REPLY
+		       (
+		       REPLY_NO,
+		       BOARD_NO,
+		       REPLY_WRITER,
+		       REPLY_CONTENT,
+		       RGROUP,
+		       RDEPTH
+		       )
+		VALUES
+		       (
+		       SEQ_FRNO.NEXTVAL,
+		       #{boardNo},
+		       #{replyWriter},
+		       #{replyContent},
+		       #{rgroup},
+		       1
+		       )
+	</insert>
+	
+
 </mapper>

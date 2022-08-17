@@ -12,6 +12,7 @@ import com.kh.somomo.common.model.vo.Attachment;
 import com.kh.somomo.common.model.vo.Likes;
 import com.kh.somomo.common.model.vo.PageInfo;
 import com.kh.somomo.common.model.vo.RegionCategory;
+import com.kh.somomo.common.model.vo.Reply;
 import com.kh.somomo.feed.model.vo.FeedBoard;
 
 @Repository
@@ -123,6 +124,20 @@ public class FeedDao {
 	public int insertChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
 		return sqlSession.insert("feedMapper.insertChatMember", cm);
 	}
+
+	public ArrayList<Reply> selectReplyList(SqlSessionTemplate sqlSession, int boardNo) {
+		return (ArrayList)sqlSession.selectList("feedMapper.selectReplyList", boardNo);
+	}
+	
+	public int insertReply(SqlSessionTemplate sqlSession, Reply reply) {
+		return sqlSession.insert("feedMapper.insertReply", reply);
+	}
+
+	public int insertReReply(SqlSessionTemplate sqlSession, Reply reply) {
+		return sqlSession.insert("feedMapper.insertReReply", reply);
+	}
+	
+
 
 
 
