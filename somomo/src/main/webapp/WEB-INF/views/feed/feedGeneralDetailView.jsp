@@ -6,8 +6,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	
 	<!----------- CSS --------------->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.6">
 	<!----------- 아이콘 CSS 링크 ------->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 	<!----------- 아이콘 CSS 링크 version 2------->
@@ -24,200 +25,6 @@
 	
 	<title>일반글상세보기</title>
 	
-	<style>
-		div{
-			/*border : 1px solid green;*/
-		}
-		/**************** 게시글 부분 ********************/
-		/* 글 테두리*/
-		.fd-board {
-			width: 100%;
-			background: #fff;
-			border-radius: 6px;
-			padding: 20px;
-			columns:#8d1b1b;
-			box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
-		}
-
-		/* 글 상단의 일반글/모임모집 부분*/
-		/* 일반글 태그 (General) */
-		.fd-board-top a {
-			text-decoration: none;
-			color: black;
-		}
-		/* 일반글 태그 (General) */
-           .btnBoardTypeG{
-	        font-size: 12px;
-	        border-radius: 20px;
-	        border: 1px solid lightgray;
-	        background-color: lightgray;
-	        color: black;
-	    }
-		/* 모임모집 태그 (Meet) */
-		.btnBoardTypeM{
-	        font-size: 12px;
-	        border-radius: 20px;
-	        border: 1px solid pink;
-	        background-color: pink;
-	        color: black;
-	    }
-
-		/* 글 상단의 지역(경기도/서울/인천 등등)*/
-	    .btnRegionNo{
-	    	font-size: 12px;
-	        border: 1px solid rgb(248, 248, 154);
-	        border-radius: 20px;
-	        background-color: rgb(248, 248, 154);
-	        color: black;
-	    }
-
-		/* 작성자 정보, 시간, ...버튼(아이콘 등록 필요) */
-       	.fd-board-writer-date{width: 100%;}
-
-		/* 작성자 프로필이미지*/
-		.profileImg-area{
-			width: 50px;
-			height: 50px;
-		}
-		.profileImg{
-			border-radius: 50%;
-			width:100%;
-			height:50px;
-		}
-
-		/* 글 내용 부분 각 margin*/
-		.fdm, .md{margin-top:10px;}
-
-		/* 좋아요/찜 버튼 */
-		.likeBtn{
-			width:30px;
-			height:30px;
-		}
-
-		/* 버튼 색 (다른 페이지와 통일 필요)*/
-		.btnPink{
-			display:block;
-			width:100%;
-			margin-top: 10px;
-			padding: 10px;
-			background-color: rgb(250,188,186);
-			border: 1px solid rgb(250,188,186);
-			border-radius: 20px;
-			color: white;
-			font-size: 18px;
-			font-weight: bold;
-		}
-		
-		.btnPink:hover{
-     		background-color: #FEC8C6;
-     		border: 1px solid #FEC8C6;
-   		}
-		
-		/**************** 댓글 부분 ********************/
-        .reply-input-area {
-        	width: 100%;
-            height: 50px;
-            margin-top: 10px;
-        }
-
-        .reply-input-area > textarea {
-            width: 78%;
-            height: 40px;
-            font-size: 12px;
-            border-radius: 20px;
-            padding-left: 10px;
-            padding-right: 10px;
-            border: none;
-            outline: 1px solid var(--border-color);
-            vertical-align:middle;
-        }
-        .reply-input-area > textarea:focus {
-            outline: 1px solid rgb(250,188,186);
-        }
-        /* 작성 버튼 */
-        .reply-input-area > button {
-        	height: 40px;
-            width: 15%;
-            color: white;
-            font-weight: bold;
-            border: none;
-            border-radius: 20px;
-            background-color: rgb(250,188,186);
-            margin-left: 10px;
-            vertical-align:middle;
-        }
-        
-        .reply-content-area .replyWrap {
-		  position: relative;
-		  min-height: 67px;
-		  padding: 14px 10px 14px 44px;
-		  border-top: 1px solid #f0f0f0;
-		}
-		
-		.replyWrap .writeInfo {
-		  display: flex;
-		  text-align: left;
-		  overflow: hidden;
-		  max-height: 18.59px;
-		  font-size: 13px;
-		  white-space: normal;
-		  max-width: 90%;
-		  padding-right: 3px;
-		  font-weight: 600;
-		  color: #333;
-		}
-		
-		.replyWrap  .writeInfo>.upProfile {
-		  position: absolute;
-		  left: 25px;
-		  top: 15px;
-		}
-		
-		.upProfile {
-		  margin-left: -27px;
-		}
-		
-		.upProfile .upProfileImg img{
-		  width: 45px;
-		  height: 45px;
-		  border-radius: 50%;
-		}
-
-		.content-area {
-		  font-size: 13px;
-		  line-height: 1.4;
-		  cursor: pointer;
-		}
-		
-		 .reply-btn-area {
-		  display: flex;
-		  position: relative;
-		  vertical-align: top;
-		  margin-top: 5px;
-		}
-		
-		.reply-btn-area {
-			margin-top:50x;
-		}
-		
-		.rBtn {
-			font-weight: bold;
-			color: gray;
-			font-size: 13px;
-			border: none;
-			background: none;
-			margin-right: 5px;
-		}
-
-		.reply-replyBtn {
-		  margin-left: 10px;
-		}
-		
-		#mUpReplyContent {
-			overflow: hidden;
-			resize: none;
-		}
-    </style>
 </head>
 <body>
 	<!--------------------- 왼쪽 사이드 바 ------------------------>
@@ -260,7 +67,7 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
-							<td>${fb.nickname}</td>
+							<td><div class="fd-board-nickname"><strong>${fb.nickname}</strong></div></td>
 							<c:if test="${loginUser.userId eq fb.boardWriter}">
 								<td align="right">
 									<div class="form-icon">
@@ -274,7 +81,7 @@
 								</td>
 							</c:if>
 						</tr>
-						<tr><td class="fd-board-date">${fb.boardDate}</td></tr>
+						<tr><td class="fd-board-date"><div class="fd-board-nickname">${fb.boardDate}</div></td></tr>
 					</table>
 					<div class="fd-board-contents fdm">
 						<div class="title">
@@ -285,7 +92,7 @@
 							<p id="content">${fn:replace(fb.boardContent, newLine, '<br/>')}</p>
 							<c:if test="${not empty fatList}">
 								<c:forEach var="fat" items="${fatList}">
-									<img src="${fat.changeName}" style="width:100%; height:200px;">
+									<img src="${fat.changeName}">
 								</c:forEach>
 							</c:if>
 						</div>
@@ -821,7 +628,7 @@
     </div>
     <!-- 오른쪽 사이드 바 끝-->
     
-    <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/feed.js"></script>
     <br><br><br><br>
 </body>
 </html>

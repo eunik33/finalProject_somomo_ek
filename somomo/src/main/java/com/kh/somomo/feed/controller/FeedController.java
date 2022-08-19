@@ -29,6 +29,7 @@ import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
 import com.kh.somomo.feed.model.vo.FeedBoard;
+import com.kh.somomo.member.model.vo.Member;
 
 @Controller
 public class FeedController {
@@ -40,7 +41,7 @@ public class FeedController {
 	public ModelAndView selectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
 			                           ModelAndView mv) throws ParseException {
 		
-		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5); // 페이징처리
+		PageInfo pi = Pagination.getPageInfoFeed(feedService.selectFeedListCount(), currentPage, 5); // 페이징처리(마지막페이지 번호 계산해서 추가로 받아옴)
 		
 		mv.addObject("pi", pi)
 		  .addObject("rList", feedService.selectRegionList()) // 지역 카테고리 목록 가져오기
@@ -50,13 +51,10 @@ public class FeedController {
 	}
 	
 	@RequestMapping(value="list.fd")
-	public String ajaxSelectFeedList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
-	 		 						 String userId, Model model) throws ParseException {
-		
-		PageInfo pi = Pagination.getPageInfo(feedService.selectFeedListCount(), currentPage, 10, 5); // 페이징처리
-		
-		ArrayList<FeedBoard> fList = feedService.selectFeedList(pi, userId); // 사용자의 피드 목록 가져오기
-		for(FeedBoard fb : fList) {
+	public String ajaxSelectFeedList(PageInfo pi, String userId, Model model) throws ParseException {
+
+		ArrayList<FeedBoard> fbList = feedService.selectFeedList(pi, userId); // 사용자의 피드 목록 가져오기 
+		for(FeedBoard fb : fbList) {
 			
 			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate())); // 지난 날짜 설정
 			
@@ -66,18 +64,15 @@ public class FeedController {
 		}
 		
 		ArrayList<Attachment> fatList = new ArrayList<>();
-		if(!fList.isEmpty()) {
+		if(!fbList.isEmpty()) {
 			HashMap<String, Integer> boardRange = new HashMap<>();
-			boardRange.put("min", fList.get(fList.size()-1).getBoardNo()); // 첫번 째 글번호
-			boardRange.put("max", fList.get(0).getBoardNo()); // 마지막 글번호
+			boardRange.put("min", fbList.get(fbList.size()-1).getBoardNo()); // 첫번 째 글번호
+			boardRange.put("max", fbList.get(0).getBoardNo()); // 마지막 글번호
 			
-			//System.out.println(boardRange.get("min"));
-			//System.out.println(boardRange.get("max"));
-			//System.out.println(feedService.selectFeedAttachmentList(boardRange));
 			fatList = feedService.selectFeedAttachmentList(boardRange);
 		}
 			
-		model.addAttribute("fList", fList)
+		model.addAttribute("fbList", fbList)
 			 .addAttribute("fatList", fatList);
 		
 		return "feed/ajaxFeedList";
@@ -312,6 +307,40 @@ public class FeedController {
 	@RequestMapping("checkChatMember.fd")
 	public String ajaxCheckChatMember(ChatMember cm) {
 		return feedService.checkChatMember(cm) > 0 ? "Y" : "N";
+	}
+	
+	@ResponseBody
+	@RequestMapping("checkJoinCondition.fd")
+	public String ajaxCheckJoinCondition(int boardNo, Member m) {
+		
+		FeedBoard fb = feedService.selectMeetBoard(boardNo);
+		setMeetCondition(fb);
+		
+		// 모집 조건 충족하는 지 판별
+		return checkJoinCondition(fb, m) ? "isSatisfy" : "notSatisfy";
+	}
+	
+	// 신청자가 모집 조건을 충족하는지 판별
+	public boolean checkJoinCondition(FeedBoard fb, Member m) {
+		
+		// 모집나이, 모집성별 모두 제한 없을 경우
+		if(fb.getMeetAge().equals("A") && fb.getMeetGender().equals("A")) {
+			return true;
+		}
+		
+		boolean isSatisfy = true;
+		// 모집나이 조건 있을 경우
+		if(!fb.getMeetAge().equals("A")) {
+			int minAge = Integer.parseInt(fb.getMinAge());
+			int maxAge = Integer.parseInt(fb.getMaxAge());
+			if(m.getAge() < minAge  || maxAge < m.getAge()) isSatisfy = false;
+		}
+		
+		// 모집나이 조건 있는 경우는 바로 전에 걸러졌고, 모집나이+성별 제한 없는 경우도 처음에 걸러졌기 때문에
+		// 모집성별은 A인지 확인할 필요가 없고 F,M만 비교하면 됨
+		if(!m.getGender().equals(fb.getMeetGender())) isSatisfy = false;
+		
+		return isSatisfy;
 	}
 	
 	@RequestMapping("joinChat.fd")

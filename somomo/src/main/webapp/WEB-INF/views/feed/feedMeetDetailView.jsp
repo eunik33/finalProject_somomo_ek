@@ -7,7 +7,7 @@
 <head>
 	<meta charset="UTF-8">
 	<!----------- CSS --------------->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.6">
 	<!----------- 아이콘 CSS 링크 ------->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 	<!----------- 아이콘 CSS 링크 version 2------->
@@ -24,103 +24,6 @@
 	
 	<title>모임모집글상세보기</title>
 	
-	<style>
-		/**************** 게시글 부분 ********************/
-		/* 글 테두리*/
-		.fd-board {
-			width: 100%;
-			background: #fff;
-			border-radius: 6px;
-			padding: 20px;
-			columns:#8d1b1b;
-			box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
-		}
-
-		/* 글 상단의 일반글/모임모집 부분*/
-		/* 일반글 태그 (General) */
-		.fd-board-top a {
-			text-decoration: none;
-			color: black;
-		}
-		/* 일반글 태그 (General) */
-           .btnBoardTypeG{
-	        font-size: 12px;
-	        border-radius: 20px;
-	        border: 1px solid lightgray;
-	        background-color: lightgray;
-	        color: black;
-	    }
-		/* 모임모집 태그 (Meet) */
-		.btnBoardTypeM{
-	        font-size: 12px;
-	        border-radius: 20px;
-	        border: 1px solid pink;
-	        background-color: pink;
-	        color: black;
-	    }
-
-		/* 글 상단의 지역(경기도/서울/인천 등등)*/
-	    .btnRegionNo{
-	    	font-size: 12px;
-	        border: 1px solid rgb(248, 248, 154);
-	        border-radius: 20px;
-	        background-color: rgb(248, 248, 154);
-	        color: black;
-	    }
-
-		/* 작성자 정보, 시간, ...버튼(아이콘 등록 필요) */
-       	.fd-board-writer-date{width: 100%;}
-
-		/* 작성자 프로필이미지*/
-		.profileImg-area{
-			width: 50px;
-			height: 50px;
-		}
-		.profileImg{
-			border-radius: 50%;
-			width:100%;
-			height:50px;
-		}
-
-		/* 글 내용 부분 각 margin*/
-		.fdm, .md{margin-top:10px;}
-
-		/* 좋아요/찜 버튼 */
-		.likeBtn{
-			width:30px;
-			height:30px;
-		}
-
-		/* 버튼 색 (다른 페이지와 통일 필요)*/
-		.btnPink{
-			display:block;
-			width:100%;
-			margin-top: 10px;
-			padding: 10px;
-			background-color: rgb(250,188,186);
-			border: 1px solid rgb(250,188,186);
-			border-radius: 20px;
-			color: white;
-			font-size: 18px;
-			font-weight: bold;
-		}
-		.btnPink:hover{
-     		background-color: #FEC8C6;
-     		border: 1px solid #FEC8C6;
-   		}
-   		.btnDisabled{
-			display:block;
-			width:100%;
-			margin-top: 10px;
-			padding: 10px;
-			background-color: rgb(190, 190, 190);
-			border: rgb(190, 190, 190);
-			border-radius: 20px;
-			color: white;
-			font-size: 18px;
-			font-weight: bold;
-		}
-    </style>
 </head>
 <body>
 	<!--------------------- 왼쪽 사이드 바 ------------------------>
@@ -148,82 +51,7 @@
         <div class="main-feed">
 	        <!-- 글 내용 띄우줄 공간 -->
 			<div class="board-area">
-				<div class="fd-board">
-					<div class="fd-board-top">
-						<a href="#" class="tag btnBoardTypeM">모임모집</a>&nbsp;
-					    <a href="#" class="tag btnRegionNo">${fb.regionName}</a>
-			   		</div>
-					<table class="fd-board-writer-date">
-						<tr>
-							<td rowspan="2" class="profileImg-area">
-								<c:choose>
-									<c:when test="${fb.profileImg ne null}">
-										<img class="profileImg" src="${fb.profileImg}" style="width:100%;">
-									</c:when>
-									<c:otherwise>
-										<img class="profileImg" src="resources/img/member/profile_img.png" style="width:100%;">
-									</c:otherwise>
-								</c:choose>
-							</td>
-							<td>${fb.nickname}</td>
-							<td align="right">
-								<div class="form-icon">
-									<i class='bx bx-dots-vertical-rounded feed'>
-									<ul class="feed-link">
-										<li><a class="updateMeetBoard">수정</a></li>
-										<li><a class="checkDelete">삭제</a></li>
-										<li><a href="#">신고(미정)</a></li>
-									</ul>
-									</i>
-								</div>
-							</td>
-						</tr>
-						<tr><td class="fd-board-date">${fb.boardDate}</td></tr>
-					</table>
-					<div class="fd-board-contents fdm">
-						<div class="title">
-							<c:choose>
-								<c:when test="${fb.countMember lt fb.meetTotal}">
-									<b>모집중&nbsp;</b>
-								</c:when>
-								<c:otherwise>
-									<b>모집마감&nbsp;</b>
-								</c:otherwise>
-							</c:choose>
-							${fb.boardTitle}
-						</div>
-						<div class="content fdm">
-							<% pageContext.setAttribute("newLine", "\n"); %>
-							<p id="content">${fn:replace(fb.boardContent, newLine, '<br/>')}</p>
-						</div>
-						<div class="meet-info fdm" style="padding:5px;">
-							<div><img src="resources/img/test1.jpg" width="100%"></div>
-							<div class="fdm">
-								👉${fb.meetPlace} | ${fb.meetDate}<br>
-								👉${fb.meetCondition}<br>
-								👉${fb.countMember}/${fb.meetTotal}명 참여
-							</div>
-						</div>
-					</div>
-					<div style="margin-top:20px;">
-						<span class="likeBtn">
-							<img class="likeN" src="resources/img/star-off.png">
-						</span>
-						<span class="countLike">찜${fb.countLike}개</span>
-					</div>
-					<div class="fdm">${fb.countMember}명 참여중</div>
-				
-					<div class="joinChatBtn">
-						<c:choose>
-							<c:when test="${fb.countMember lt fb.meetTotal}">
-								<button type="button" data-toggle="modal" data-target="#joinChatModal" class="btnPink">모임 참여 신청</button>
-							</c:when>
-							<c:otherwise>
-								<button type="button" class="btnDisabled" disabled>마감되었습니다</button>
-							</c:otherwise>
-						</c:choose>
-					</div>
-				</div>
+				<jsp:include page="ajaxMeetBoard.jsp" />
 			</div>
 		</div>
 	
@@ -241,50 +69,9 @@
         		checkChatMember();
         	});
         	
-       		// 좋아요(찜) 버튼 클릭 시
-       		$(document).on('click', '.likeBtn', function(){
-				changeLike(this); // 좋아요(찜) 사진 변경		
-       		});
-
-       		// (게시글)수정 버튼 클릭 시
-			$(document).on('click', '.updateMeetBoard', function(){
-				setModalContent(); // 수정 모달창 내용 세팅
-				$('#updateMeetBoardModal').modal('toggle'); // 수정 모당창 띄우기
-			});
-               		
-			// (게시글)삭제 버튼 클릭 시
-			$(document).on('click', '.checkDelete', function(){
-        		if(confirm("삭제하시겠습니까?")){
-    				$('#postForm input[name="boardNo"]').val(${fb.boardNo});
-    				$('#postForm').attr('action', 'delete.fd').submit();
-    			}
-			});	
-    		
-        	
-        	// ajax 좋아요 등록 여부 확인
-    		function checkLike(){
-        		$.ajax({
-        			url : 'checkLike.fd',
-        			method : 'POST',
-        			data : {
-        				boardNo : '${fb.boardNo}',
-        				userId : '${loginUser.userId}'
-        			},
-        			success : function(result){
-        				if(result == 'Y'){
-        					$('.likeBtn').html('<img class="likeY" src="resources/img/star-on.png">');
-        				}
-        				else{
-        					$('.likeBtn').html('<img class="likeN" src="resources/img/star-off.png">');
-        				}
-        				
-        			},
-        			error : function(){
-        				console.log('에러');
-        			}
-        		});
-    		}
-    		
+        	//------------------------------------------------------
+       		//------------------- 모임(채팅) 관련 -------------------
+       		//------------------------------------------------------
         	// ajax 모임 참여자 여부 확인
         	function checkChatMember(){
         		$.ajax({
@@ -311,6 +98,88 @@
         		alert('feedMeetDetailView.jsp : 해당 채팅방으로 경로 설정 필요');
         		location.href = '#';
         	}
+        	
+			// 모임참여 버튼 클릭 시
+			function checkJoinCondition(){
+				$.ajax({
+					url : 'checkJoinCondition.fd',
+					method : 'POST',
+					data : {
+						boardNo : '${fb.boardNo}',
+						age : '${loginUser.age}',
+						gender : '${loginUser.gender}'
+					},
+					success : function(result){
+						if(result == "isSatisfy"){
+							// 모집조건 충족 시, 모임 참여 안내 모달창 띄우기
+							$('#joinChatModal').modal('toggle');
+						}
+						else{
+							alert('모집조건에 부합하지 않습니다.');
+						}
+					},
+					error : function(){
+						console.log('에러');
+					}
+				});
+			}
+
+        	//------------------------------------------------------
+       		//------------------- 게시글 수정/삭제 관련 -------------------
+       		//------------------------------------------------------
+       		// 게시글 수정/삭제 DROPDOWN
+      		$(document).on('click', '.feed', function(){
+		    	const feed = document.querySelector('.feed');
+		        const dropdownFeed = feed.querySelector('.feed-link');
+		        dropdownFeed.classList.toggle('show');
+		    });
+        	
+       		// (게시글)수정 버튼 클릭 시
+			$(document).on('click', '.updateMeetBoard', function(){
+				setModalContent(); // 수정 모달창 내용 세팅
+				$('#updateMeetBoardModal').modal('toggle'); // 수정 모당창 띄우기
+			});
+               		
+			// (게시글)삭제 버튼 클릭 시
+			$(document).on('click', '.checkDelete', function(){
+        		if(confirm("삭제하시겠습니까?")){
+    				$('#postForm input[name="boardNo"]').val(${fb.boardNo});
+    				$('#postForm').attr('action', 'delete.fd').submit();
+    			}
+			});	
+    		
+
+			//-----------------------------------------------
+       		//------------------- 좋아요 관련 -------------------
+       		//-----------------------------------------------
+        	// ajax 좋아요 등록 여부 확인
+    		function checkLike(){
+        		$.ajax({
+        			url : 'checkLike.fd',
+        			method : 'POST',
+        			data : {
+        				boardNo : '${fb.boardNo}',
+        				userId : '${loginUser.userId}'
+        			},
+        			success : function(result){
+        				if(result == 'Y'){
+        					$('.likeBtn').html('<img class="likeY" src="resources/img/star-on.png">');
+        				}
+        				else{
+        					$('.likeBtn').html('<img class="likeN" src="resources/img/star-off.png">');
+        				}
+        				
+        			},
+        			error : function(){
+        				console.log('에러');
+        			}
+        		});
+    		}
+			
+       		// 좋아요(찜) 버튼 클릭 시
+       		$(document).on('click', '.likeBtn', function(){
+				changeLike(this); // 좋아요(찜) 사진 변경		
+       		});
         	
 			// ajax 좋아요 클릭 이벤트 (등록/취소)
      		function changeLike(likeImg){
@@ -385,7 +254,6 @@
     			});
     		}
     		
-        	
         	// ajax 수정버튼 클릭 시 모달창 내용 세팅
     		function setModalContent(){
     			$.ajax({
@@ -413,54 +281,50 @@
 						}
     				}
     			});
+        	}
     			
-            	// ajax 게시글 수정 후 새로 정보 가져오기
-            	function selectMeetBoard(){
-            		$.ajax({
-            			url : 'selectNewBoard.fd',
-            			method : 'POST',
-            			data : {
-            				boardNo : '${fb.boardNo}'
-            			},
-            			success : function(data){
-            				// 응답된 문자열은 html형식(feed/ajaxMeetDetail.jsp에 응답내용 있음)
-            				$('.board-area').html(data);
-            				checkLike();
-            				checkChatMember();
-            			},
-            			error : function(){
-            				console.log('에러');
-            			}
-            		});
-            	}
-            	
-           		// 수정 모달창 안에서 글수정 버튼 클릭 시
-           		$(document).on('click', '#updateMeetBtn', function(){
-           			
-           			//var formData = new FormData($('#updateMeetForm')[0]);
-           			//contentType : false,
-           			//processData : false
-           			$.ajax({
-           				url : 'updateM.fd',
-           				method : 'POST',
-           				data : $('#updateMeetForm').serialize(),
-           				success : function(result){
-           					$('#updateMeetBoardModal').modal('hide');
-           					if(result == "success"){
-               					selectMeetBoard();
-           					}
-           					else{
-           						alert('게시글 수정 실패');
-           					}
-           				},
-           				error : function(){
-           					console.log('에러');
-           				}
-           			});
+           	// ajax 게시글 수정 후 새로 정보 가져오기
+           	function selectMeetBoard(){
+           		$.ajax({
+           			url : 'selectNewBoard.fd',
+           			method : 'POST',
+           			data : {
+           				boardNo : '${fb.boardNo}'
+           			},
+           			success : function(data){
+           				// 응답된 문자열은 html형식(feed/ajaxMeetDetail.jsp에 응답내용 있음)
+           				$('.board-area').html(data);
+           				checkLike();
+           				checkChatMember();
+           			},
+           			error : function(){
+           				console.log('에러');
+           			}
            		});
-    		}
+           	}
+           	
+         	// ajax 수정 모달창 안에서 글수정 버튼 클릭 시
+         	$(document).on('click', '#updateMeetBtn', function(){
+         		$.ajax({
+         			url : 'updateM.fd',
+         			method : 'POST',
+         			data : $('#updateMeetForm').serialize(),
+         			success : function(result){
+         				if(result == "success"){
+             				selectMeetBoard();
+         				}
+         				else{
+         					alert('게시글 수정 실패');
+         				}
+         				$('#updateMeetBoardModal').modal('hide');
+         			},
+         			error : function(){
+         				console.log('에러');
+         			}
+         		});
+         	});
+    	
 		</script>
-
 
 	   <!------- 모임모집글 수정 모달 ------->
 		<div class="modal fade" id="updateMeetBoardModal">
@@ -516,11 +380,11 @@
 							
 							<div class="row" id="selectAge-area" style="display:none">
 								<div class="col-sm-3">
-									<input type="number" min="15" class="selAge form-control" id="minAge" name="minAge" style="width:100px;">
+									<input type="number" min="15" class="selAge form-control" id="minAge" name="minAge" style="width:100px;" value="15">
 								</div>
 								~
 								<div class="col-sm-3">
-									<input type="number" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;">
+									<input type="number" class="selAge form-control" id="maxAge" name="maxAge" style="width:100px;" value="15">
 								</div>
 							</div>
 							
@@ -565,6 +429,7 @@
 			});
 		</script>
 		
+		<!------- 모임 참여 모달 ------->
 		<div class="modal fade" id="joinChatModal">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
@@ -600,10 +465,15 @@
     
 
     <!------ 오른쪽 사이드 바 --------->
-    <div class="right-sidebar">
+	<div class="right-sidebar">
+		<%-- 
 		<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
-    </div>
+		포함 시, 게시글 수정/삭제 토클 작동 안 되는 문제 수정 필요
+		--%>
+	</div>
     <!-- 오른쪽 사이드 바 끝-->
+
     <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+    <br><br><br><br>
 </body>
 </html>

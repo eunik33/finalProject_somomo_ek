@@ -185,40 +185,6 @@
 		       )
 	</insert>
 	
-	<insert id="insertChatRoom" parameterType="String">
-		INSERT 
-		  INTO 
-		       CHAT_ROOM
-		       (
-		       ROOM_NO,
-		       BOARD_NO,
-		       ROOM_NAME
-		       )
-		VALUES 
-		       (
-		       SEQ_CRNO.NEXTVAL,
-		       SEQ_FBNO.CURRVAL,
-		       #{boardTitle}
-		       )
-	</insert>
-	
-	<insert id="insertChatAdmin" parameterType="String">
-		INSERT 
-		  INTO 
-		       CHAT_MEMBER
-		       (
-		       ROOM_NO,
-		       USER_ID,
-		       USER_RANK
-		       )
-		VALUES 
-		       (
-		       SEQ_CRNO.CURRVAL,
-		       #{reviewWriter},
-		       'A'
-		       )
-	</insert>
-	
 	<insert id="insertMeetBoard">
 		INSERT
 		  INTO
@@ -253,6 +219,40 @@
 		       #{meetTotal},
 		       #{meetGender},
 		       #{meetAge}
+		       )
+	</insert>
+	
+	<insert id="insertChatRoom" parameterType="String">
+		INSERT 
+		  INTO 
+		       CHAT_ROOM
+		       (
+		       ROOM_NO,
+		       BOARD_NO,
+		       ROOM_NAME
+		       )
+		VALUES 
+		       (
+		       SEQ_CRNO.NEXTVAL,
+		       SEQ_FBNO.CURRVAL,
+		       #{boardTitle}
+		       )
+	</insert>
+	
+	<insert id="insertChatAdmin" parameterType="String">
+		INSERT 
+		  INTO 
+		       CHAT_MEMBER
+		       (
+		       ROOM_NO,
+		       USER_ID,
+		       USER_RANK
+		       )
+		VALUES 
+		       (
+		       SEQ_CRNO.CURRVAL,
+		       #{reviewWriter},
+		       'A'
 		       )
 	</insert>
 	
@@ -378,84 +378,6 @@
 		       F.STATUS = 'Y'
 	</select>
 	
-	<update id="updateMeetBoard" parameterType="feedBoard">
-		UPDATE 
-		       FEED_BOARD
-		   SET 
-		       REGION_NO = #{regionNo},
-		       BOARD_TITLE = #{boardTitle},
-		       BOARD_CONTENT = #{boardContent},
-		       MEET_PLACE = #{meetPlace},
-		       MEET_DATE = #{meetDate},
-		       MEET_TOTAL = #{meetTotal},
-		       MEET_GENDER = #{meetGender},
-		       MEET_AGE = #{meetAge}
-		 WHERE 
-		       BOARD_NO = #{boardNo}
-	</update>
-	
-	<update id="deleteBoard" parameterType="_int">
-		UPDATE 
-		       FEED_BOARD
-		   SET 
-		       STATUS = 'N'
-		 WHERE 
-		       BOARD_NO = #{boardNo}
-	</update>
-	
-	<delete id="deleteAllAttachment" parameterType="_int">
-		DELETE
-		  FROM
-		       FEED_ATTACHMENT
-		 WHERE
-		       BOARD_NO = #{boardNo}
-	</delete>
-	
-	<insert id="insertLike" parameterType="likes">
-		INSERT 
-		  INTO
-		       FEED_LIKES
-		       (
-		       USER_ID,
-		       BOARD_NO
-		       )
-		VALUES
-		       (
-		       #{userId},
-		       #{boardNo}
-		       )
-	</insert>
-	
-	<delete id="deleteLike" parameterType="likes">
-		DELETE 
-		  FROM
-		       FEED_LIKES
-		 WHERE
-		       USER_ID = #{userId}
-		   AND
-		       BOARD_NO = #{boardNo}
-	</delete>
-	
-	<select id="checkLike" parameterType="likes" resultType="_int">
-		SELECT 
-		       COUNT(*)
-		  FROM 
-		       FEED_LIKES 
-		 WHERE 
-		       USER_ID = #{userId}
-		   AND
-		       BOARD_NO = #{boardNo}	       
-	</select>
-	
-	<select id="countLike" parameterType="_int" resultType="_int">
-		SELECT 
-		       COUNT(*)
-		  FROM 
-		       FEED_LIKES 
-		 WHERE 
-		       BOARD_NO = #{boardNo}	       
-	</select>
-	
 	<select id="checkChatMember" parameterType="chatMember" resultType="_int">
 		SELECT
 		       COUNT(*) 
@@ -501,6 +423,39 @@
 		       #{userId}
 		       )
 	</insert>
+	
+	<update id="updateMeetBoard" parameterType="feedBoard">
+		UPDATE 
+		       FEED_BOARD
+		   SET 
+		       REGION_NO = #{regionNo},
+		       BOARD_TITLE = #{boardTitle},
+		       BOARD_CONTENT = #{boardContent},
+		       MEET_PLACE = #{meetPlace},
+		       MEET_DATE = #{meetDate},
+		       MEET_TOTAL = #{meetTotal},
+		       MEET_GENDER = #{meetGender},
+		       MEET_AGE = #{meetAge}
+		 WHERE 
+		       BOARD_NO = #{boardNo}
+	</update>
+	
+	<update id="deleteBoard" parameterType="_int">
+		UPDATE 
+		       FEED_BOARD
+		   SET 
+		       STATUS = 'N'
+		 WHERE 
+		       BOARD_NO = #{boardNo}
+	</update>
+	
+	<delete id="deleteAllAttachment" parameterType="_int">
+		DELETE
+		  FROM
+		       FEED_ATTACHMENT
+		 WHERE
+		       BOARD_NO = #{boardNo}
+	</delete>
 	
 	<select id="selectReplyList" parameterType="_int" resultMap="replyResultSet">
 		SELECT
@@ -618,5 +573,50 @@
 		 WHERE 
 		       REPLY_NO = #{replyNo}
 	</update>
+	
+	<insert id="insertLike" parameterType="likes">
+		INSERT 
+		  INTO
+		       FEED_LIKES
+		       (
+		       USER_ID,
+		       BOARD_NO
+		       )
+		VALUES
+		       (
+		       #{userId},
+		       #{boardNo}
+		       )
+	</insert>
+	
+	<delete id="deleteLike" parameterType="likes">
+		DELETE 
+		  FROM
+		       FEED_LIKES
+		 WHERE
+		       USER_ID = #{userId}
+		   AND
+		       BOARD_NO = #{boardNo}
+	</delete>
+	
+	<select id="checkLike" parameterType="likes" resultType="_int">
+		SELECT 
+		       COUNT(*)
+		  FROM 
+		       FEED_LIKES 
+		 WHERE 
+		       USER_ID = #{userId}
+		   AND
+		       BOARD_NO = #{boardNo}	       
+	</select>
+	
+	<select id="countLike" parameterType="_int" resultType="_int">
+		SELECT 
+		       COUNT(*)
+		  FROM 
+		       FEED_LIKES 
+		 WHERE 
+		       BOARD_NO = #{boardNo}	       
+	</select>
 
 </mapper>

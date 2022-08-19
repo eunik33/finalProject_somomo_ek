@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <!----------- CSS --------------->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.6">
     <!----------- 아이콘 CSS 링크 ------->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <!----------- 아이콘 CSS 링크 version 2------->
@@ -23,93 +23,10 @@
 
     <title>메인 페이지</title>
     
-	<style>
-		/**************** 게시글 부분 ********************/
-		/* 글 테두리*/
-		.fd-board {
-		    width: 100%;
-		    background: #fff;
-		    border-radius: 6px;
-		    padding: 20px;
-		    columns:#626262;
-		    box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
-		    margin:10px;
-		}
-		
-		/* 글 상단의 일반글/모임모집 부분*/
-		/* 일반글 태그 (General) */
-		.fd-board-top a {
-			text-decoration: none;
-			color: black;
-			
-		}
-		.btnBoardTypeG {
-	       font-size: 12px;
-	       border-radius: 20px;
-	       border: 1px solid lightgray;
-	       background-color: lightgray;
-	       color: black;
-	   	}
-		/* 모임모집 태그 (Meet) */
-		.btnBoardTypeM {
-	       font-size: 12px;
-	       border-radius: 20px;
-	       border: 1px solid pink;
-	       background-color: pink;
-	       color: black;
-	   	}
-		
-		/* 글 상단의 지역(경기도/서울/인천 등등)*/
-		.btnRegionNo {
-		   	font-size: 12px;
-		   	border: 1px solid rgb(248, 248, 154);
-		    border-radius: 20px;
-		    background-color: rgb(248, 248, 154);
-		    color: black;
-		}
-		
-		/* 작성자 정보, 시간, ...버튼 */
-		.fd-board-writer-date {width: 100%;}
-		
-		/* 작성자 프로필이미지*/
-		.profileImg-area {
-			width: 50px;
-			height: 50px;
-		}
-		.profileImg {
-			border-radius: 50%;
-			width:100%;
-			height:50px;
-		}
-		
-		/* 글 내용 부분 각 margin + 모달창*/
-		.fdm, .mdm {margin-top:10px;}
-		
-		/* 좋아요/찜 버튼 */
-		.likeBtn {
-			width:30px;
-			height:30px;
-		}
-		.likeBtn:hover {cursor:pointer;}
-		
-		/* 버튼 색 (다른 페이지와 통일 필요) */
-		.btnPink {
-			color: white;
-			background-color: rgb(250,188,186);
-			font-weight: bold;
-		}
-		.btnPink:hover {
-			color:white;
-		    background-color: #FEC8C6;
-			font-weight: bold;
-		}
-	</style>
 </head>
 <body>
 	<!--------------------- 왼쪽 사이드 바 ------------------------>
-	<div class="left-sidebar">
-		<jsp:include page="feedCommon/feed_leftSidebar.jsp" />
-	</div>
+	<jsp:include page="feedCommon/feed_leftSidebar.jsp" />
 	<!--------------------- 왼쪽 사이드 바 끝 ------------------------>
 
 	<!----------- 헤더 , 메인 컨텐츠 ---------->
@@ -145,10 +62,8 @@
 			<script>
 				// 글쓰기 버튼 Toggle javascript
 				const menu = document.querySelector('.menuToggle');
-				
 				menu.addEventListener('click', function() {
-					console.log(menu);
-				menu.classList.toggle('active');
+					menu.classList.toggle('active');
 				});
        		</script>
            	
@@ -218,14 +133,13 @@
         			method : 'POST',
         			data : {
         				userId : '${loginUser.userId}',
-        				cpage : currentPage
+        				currentPage : currentPage,
+        				boardLimit : '${pi.boardLimit}'
         			},
         			success : function(data){
-        				
         				// 응답된 문자열은 html형식(feed/ajaxFeedList.jsp에 응답내용 있음)
 						$('.fd-board-area').append(data);
 
-						isLoading=false;
 						// 게시글 내용 클릭 시 상세페이지로 이동
 		            	$('.fd-board-contents').click(function(){
 		            		//let bno = $(this).closest('div[class="fd-board"]').find('input[name="boardNo"]').val();
@@ -256,8 +170,6 @@
         		
         		let bno = $(likeImg).data('bno');
         		let boardType = $(likeImg).data('btype');
-        		
-        		console.log('글번호:' + bno);
 
 				// 기존에 좋아요 안 눌렀을 경우 => 좋아요 등록
         		if($(likeImg).children('img').hasClass('likeN')){ 
@@ -361,7 +273,7 @@
 							</div>
 							
 							<div style="margin-top:10px;">
-								<button type="submit" class="btn btn-block btnPink">글작성</button>
+								<button type="submit" class="btnPink">글작성</button>
 							</div>
 						</form>
 					</div>				
@@ -440,7 +352,7 @@
 							</div>
 							
 							<div style="margin-top:10px;">
-								<button type="submit" class="btn btn-block btnPink">글작성</button>
+								<button type="submit" class="btnPink">글작성</button>
 							</div>
 						</form>
 					</div>				
@@ -492,6 +404,6 @@
 		<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
     </div>
     <!-- 오른쪽 사이드 바 끝-->
-    <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/feed.js"></script>
 </body>
 </html>

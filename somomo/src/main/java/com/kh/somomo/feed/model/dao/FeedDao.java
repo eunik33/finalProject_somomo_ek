@@ -81,9 +81,34 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectMeetBoard", boardNo);
 	}
 
+	public int checkChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
+		return sqlSession.selectOne("feedMapper.checkChatMember", cm);
+	}
+
+	public int selectMeetTotal(SqlSessionTemplate sqlSession, int roomNo) {
+		return sqlSession.selectOne("feedMapper.selectMeetTotal",roomNo);
+	}
+
+	public int selectCountMember(SqlSessionTemplate sqlSession, int roomNo) {
+		return sqlSession.selectOne("feedMapper.selectCountMember", roomNo);
+	}
+
+	public int insertChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
+		return sqlSession.insert("feedMapper.insertChatMember", cm);
+	}
+	
+	
+	// updateGeneralBoard 관련
+	
+	
 	public int updateMeetBoard(SqlSessionTemplate sqlSession, FeedBoard fb) {
 		return sqlSession.update("feedMapper.updateMeetBoard", fb);
 	}
+	
+	
+	// insertNewAttachment 관련
+	// deleteAttachment 관련
+	
 	
 	public int deleteBoard(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.update("feedMapper.deleteBoard", boardNo);
@@ -93,6 +118,34 @@ public class FeedDao {
 		return sqlSession.delete("feedMapper.deleteAllAttachment", boardNo);
 	}
 
+	public ArrayList<Reply> selectReplyList(SqlSessionTemplate sqlSession, int boardNo) {
+		return (ArrayList)sqlSession.selectList("feedMapper.selectReplyList", boardNo);
+	}
+	
+	public int insertReply(SqlSessionTemplate sqlSession, Reply reply) {
+		return sqlSession.insert("feedMapper.insertReply", reply);
+	}
+	
+	public int insertReReply(SqlSessionTemplate sqlSession, Reply reply) {
+		return sqlSession.insert("feedMapper.insertReReply", reply);
+	}
+	
+	public int updateReply(SqlSessionTemplate sqlSession, Reply reply) {
+		return sqlSession.update("feedMapper.updateReply", reply);
+	}
+	
+	public int countRereply(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.selectOne("feedMapper.countRereply", replyNo);
+	}
+	
+	public int deleteReply(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.update("feedMapper.deleteReply", replyNo);
+	}
+	
+	public int deleteReplyContent(SqlSessionTemplate sqlSession, int replyNo) {
+		return sqlSession.update("feedMapper.deleteReplyContent", replyNo);
+	}
+	
 	public int insertLike(SqlSessionTemplate sqlSession, Likes like) {
 		return sqlSession.insert("feedMapper.insertLike", like);
 	}
@@ -109,52 +162,4 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.countLike", boardNo);
 	}
 	
-	public int checkChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
-		return sqlSession.selectOne("feedMapper.checkChatMember", cm);
-	}
-
-	public int selectMeetTotal(SqlSessionTemplate sqlSession, int roomNo) {
-		return sqlSession.selectOne("feedMapper.selectMeetTotal",roomNo);
-	}
-
-	public int selectCountMember(SqlSessionTemplate sqlSession, int roomNo) {
-		return sqlSession.selectOne("feedMapper.selectCountMember", roomNo);
-	}
-
-	public int insertChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
-		return sqlSession.insert("feedMapper.insertChatMember", cm);
-	}
-
-	public ArrayList<Reply> selectReplyList(SqlSessionTemplate sqlSession, int boardNo) {
-		return (ArrayList)sqlSession.selectList("feedMapper.selectReplyList", boardNo);
-	}
-	
-	public int insertReply(SqlSessionTemplate sqlSession, Reply reply) {
-		return sqlSession.insert("feedMapper.insertReply", reply);
-	}
-
-	public int insertReReply(SqlSessionTemplate sqlSession, Reply reply) {
-		return sqlSession.insert("feedMapper.insertReReply", reply);
-	}
-	
-	public int updateReply(SqlSessionTemplate sqlSession, Reply reply) {
-		return sqlSession.update("feedMapper.updateReply", reply);
-	}
-
-	public int countRereply(SqlSessionTemplate sqlSession, int replyNo) {
-		return sqlSession.selectOne("feedMapper.countRereply", replyNo);
-	}
-
-	public int deleteReply(SqlSessionTemplate sqlSession, int replyNo) {
-		return sqlSession.update("feedMapper.deleteReply", replyNo);
-	}
-	
-	public int deleteReplyContent(SqlSessionTemplate sqlSession, int replyNo) {
-		return sqlSession.update("feedMapper.deleteReplyContent", replyNo);
-	}
-	
-
-
-
-
 }

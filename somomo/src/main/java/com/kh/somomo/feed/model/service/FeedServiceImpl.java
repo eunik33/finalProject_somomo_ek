@@ -26,6 +26,7 @@ public class FeedServiceImpl implements FeedService{
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 
+	//------- 피드 리스트 조회 + 페이징처리 -------//
 	@Override
 	public int selectFeedListCount() {
 		return feedDao.selectFeedListCount(sqlSession);
@@ -46,6 +47,7 @@ public class FeedServiceImpl implements FeedService{
 		return feedDao.selectRegionList(sqlSession);
 	}
 
+	//------- 글 작성 서비스 -------//
 	@Override
 	@Transactional
 	public int insertGeneralBoard(FeedBoard fb, ArrayList<Attachment> atList) {
@@ -70,6 +72,7 @@ public class FeedServiceImpl implements FeedService{
 		return result1 * result2 * result3;
 	}
 	
+	//------- 게시글 상세 조회 서비스 -------//
 	@Override
 	public int increaseCount(int boardNo) {
 		return feedDao.increaseCount(sqlSession, boardNo);
@@ -96,6 +99,27 @@ public class FeedServiceImpl implements FeedService{
 	}
 	
 	@Override
+	public int checkChatMember(ChatMember cm) {
+		return feedDao.checkChatMember(sqlSession, cm);
+	}
+	
+	@Override
+	public boolean checkChatMemberSpace(int boardNo, int roomNo) {
+		
+		int meetTotal = feedDao.selectMeetTotal(sqlSession, boardNo);
+		int countMember = feedDao.selectCountMember(sqlSession, roomNo);
+		
+		if(countMember < meetTotal) return true;
+		else return false;
+	}
+	
+	@Override
+	public int insertChatMember(ChatMember cm) {
+		return feedDao.insertChatMember(sqlSession, cm);
+	}
+	
+	//------- 게시글 수정/삭제 서비스 -------//
+	@Override
 	public int updateGeneralBoard(FeedBoard fb) {
 		return 0;
 	}
@@ -103,6 +127,16 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public int updateMeetBoard(FeedBoard fb) {
 		return feedDao.updateMeetBoard(sqlSession, fb);
+	}
+	
+	@Override
+	public int insertNewAttachment(ArrayList<Attachment> atList) {
+		return 0;
+	}
+	
+	@Override
+	public int deleteAttachment(ArrayList<Attachment> atList) {
+		return 0;
 	}
 	
 	@Override
@@ -115,16 +149,7 @@ public class FeedServiceImpl implements FeedService{
 		return feedDao.deleteAllAttachment(sqlSession, boardNo);
 	}
 
-	@Override
-	public int insertNewAttachment(ArrayList<Attachment> atList) {
-		return 0;
-	}
-
-	@Override
-	public int deleteAttachment(ArrayList<Attachment> atList) {
-		return 0;
-	}
-
+	//------- 댓글 서비스 -------//
 	@Override
 	public ArrayList<Reply> selectReplyList(int boardNo) {
 		return feedDao.selectReplyList(sqlSession, boardNo);
@@ -161,6 +186,7 @@ public class FeedServiceImpl implements FeedService{
 		return feedDao.deleteReplyContent(sqlSession, replyNo);
 	}
 
+	//------- 좋아요 서비스 -------//
 	@Override
 	public int insertLike(Likes like) {
 		return feedDao.insertLike(sqlSession, like);
@@ -180,28 +206,5 @@ public class FeedServiceImpl implements FeedService{
 	public int countLike(int boardNo) {
 		return feedDao.countLike(sqlSession, boardNo);
 	}
-	
-	@Override
-	public int checkChatMember(ChatMember cm) {
-		return feedDao.checkChatMember(sqlSession, cm);
-	}
-
-	@Override
-	public boolean checkChatMemberSpace(int boardNo, int roomNo) {
-		
-		int meetTotal = feedDao.selectMeetTotal(sqlSession, boardNo);
-		int countMember = feedDao.selectCountMember(sqlSession, roomNo);
-		
-		if(countMember < meetTotal) return true;
-		else return false;
-	}
-
-	@Override
-	public int insertChatMember(ChatMember cm) {
-		return feedDao.insertChatMember(sqlSession, cm);
-	}
-
-
-
 
 }
