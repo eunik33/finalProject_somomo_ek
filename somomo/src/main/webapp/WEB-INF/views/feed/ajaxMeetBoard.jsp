@@ -72,7 +72,7 @@
 	<div class="joinChatBtn">
 		<c:choose>
 			<c:when test="${fb.countMember lt fb.meetTotal}">
-				<button type="button" data-toggle="modal" data-target="#joinChatModal" class="btnPink">모임 참여 신청</button>
+				<button type="button" class="btnPink" onclick="checkJoinCondition();">모임 참여 신청</button>
 			</c:when>
 			<c:otherwise>
 				<button type="button" class="btnDisabled" disabled>마감되었습니다</button>
