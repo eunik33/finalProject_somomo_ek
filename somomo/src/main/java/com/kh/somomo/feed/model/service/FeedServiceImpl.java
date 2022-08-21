@@ -33,8 +33,13 @@ public class FeedServiceImpl implements FeedService{
 	}
 
 	@Override
-	public ArrayList<FeedBoard> selectFeedList(PageInfo pi, String userId) {
-		return feedDao.selectFeedList(sqlSession, pi, userId);
+	public int selectSearchListCount(HashMap<String, Object> map) {
+		return feedDao.selectSearchListCount(sqlSession, map);
+	}
+	
+	@Override
+	public ArrayList<FeedBoard> selectFeedList(PageInfo pi, HashMap<String, Object> map) {
+		return feedDao.selectFeedList(sqlSession, pi, map);
 	}
 	
 	@Override

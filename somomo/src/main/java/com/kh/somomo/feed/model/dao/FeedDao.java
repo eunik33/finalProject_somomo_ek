@@ -22,14 +22,18 @@ public class FeedDao {
 		return sqlSession.selectOne("feedMapper.selectFeedListCount");
 	}
 	
-	public ArrayList<FeedBoard> selectFeedList(SqlSessionTemplate sqlSession, PageInfo pi, String userId) {
+	public int selectSearchListCount(SqlSessionTemplate sqlSession, HashMap<String, Object> map) {
+		return sqlSession.selectOne("feedMapper.selectSearchListCount", map);
+	}
+	
+	public ArrayList<FeedBoard> selectFeedList(SqlSessionTemplate sqlSession, PageInfo pi, HashMap<String, Object> map) {
 		
 		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
 		int limit = pi.getBoardLimit();
 		
 		RowBounds rowBounds = new RowBounds(offset, limit);
 		
-		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedList", userId, rowBounds);
+		return (ArrayList)sqlSession.selectList("feedMapper.selectFeedList", map, rowBounds);
 	}
 	
 	public ArrayList<Attachment> selectFeedAttachmentList(SqlSessionTemplate sqlSession,
@@ -177,6 +181,8 @@ public class FeedDao {
 	public int countLike(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.selectOne("feedMapper.countLike", boardNo);
 	}
+
+
 
 
 	

@@ -26,11 +26,6 @@
 </head>
 <body>
 
-
-	
-
-
-
 	<!--------------------- 왼쪽 사이드 바 ------------------------>
 	<jsp:include page="feedCommon/feed_leftSidebar.jsp" />
 	<!--------------------- 왼쪽 사이드 바 끝 ------------------------>
@@ -59,13 +54,27 @@
 					<i class="uil uil-edit"></i>
 					<div class="menu">
 						<ul>
-							<li><button type="button" data-toggle="modal" data-target="#enrollBoardModal" class="btn btn-primary">일반글</button></li>
-							<li><button type="button" data-toggle="modal" data-target="#enrollMeetBoardModal" class="btn btn-primary">모임모집</button></li>
+							<li><button type="button" class="btn btn-primary" onclick="openModal('G');">일반글</button></li>
+							<li><button type="button" class="btn btn-primary" onclick="openModal('M');">모임모집</button></li>
 						</ul>
 					</div>
 				</div>
 			</div>
 			<script>
+				function openModal(bType){
+					if(bType == 'G'){
+						$('#enrollBoardModal').find('form').trigger('reset');
+						fileReset(1);
+						fileReset(2);
+						fileReset(3);
+						fileReset(4);
+						$('#enrollBoardModal').modal('toggle');
+					}
+					else{
+						$('#enrollMeetBoardModal').find('form').trigger('reset');
+						$('#enrollMeetBoardModal').modal('toggle');
+					}
+				}
 				// 글쓰기 버튼 Toggle javascript
 				const menu = document.querySelector('.menuToggle');
 				menu.addEventListener('click', function() {
@@ -85,11 +94,10 @@
         	<input type="hidden" name="boardNo" value="">
         </form>
         
-        
         <script>
 	    	$(function(){
 	    		
-	    		let currentPage = ${pi.currentPage} ;
+	    		let currentPage = ${pi.currentPage};
 	    		//let currentPage = 1 ;
 	    		
 	    		selectFeedList(currentPage);
@@ -140,7 +148,10 @@
         			data : {
         				userId : '${loginUser.userId}',
         				currentPage : currentPage,
-        				boardLimit : '${pi.boardLimit}'
+        				boardLimit : '${pi.boardLimit}',
+        				regionNo : '${sc.regionNo}',
+        				boardType : '${sc.boardType}',
+        				keyword : '${keyword}'
         			},
         			success : function(data){
         				// 응답된 문자열은 html형식(feed/ajaxFeedList.jsp에 응답내용 있음)

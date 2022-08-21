@@ -16,10 +16,10 @@ public interface FeedService {
 	//------- 피드 리스트 조회 + 페이징처리 -------//
 	// 피드 게시글 전체 개수 조회
 	int selectFeedListCount();
-	// 피드 게시글 목록 조회
-	//ArrayList<FeedBoard> selectFeedList(PageInfo pi);
+	int selectSearchListCount(HashMap<String, Object>map);
 	// 피드 게시글 목록 조회 (로그인 회원)
-	ArrayList<FeedBoard> selectFeedList(PageInfo pi, String userId);
+	//ArrayList<FeedBoard> selectFeedList(PageInfo pi, String userId);
+	ArrayList<FeedBoard> selectFeedList(PageInfo pi, HashMap<String, Object> map);
 	// 피드 게시글 첨부파일(사진) 목록 조회
 	ArrayList<Attachment> selectFeedAttachmentList(HashMap<String, Integer> boardRange);
 	

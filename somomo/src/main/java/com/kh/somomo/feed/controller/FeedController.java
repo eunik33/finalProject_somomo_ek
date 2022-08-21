@@ -29,6 +29,7 @@ import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
 import com.kh.somomo.feed.model.vo.FeedBoard;
+import com.kh.somomo.feed.model.vo.SearchCondition;
 import com.kh.somomo.member.model.vo.Member;
 
 @Controller
@@ -50,10 +51,37 @@ public class FeedController {
 		return mv;
 	}
 	
+	@RequestMapping(value="search.fd")
+	public ModelAndView selectSearchFeedList(SearchCondition sc, String keyword, ModelAndView mv)  {
+		
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("regionNo", Integer.parseInt(sc.getRegionNo()));
+		map.put("boardType", sc.getBoardType());
+		map.put("keyword", keyword);
+		
+		PageInfo pi = Pagination.getPageInfoFeed(feedService.selectSearchListCount(map), 1, 5);
+		
+		mv.addObject("pi", pi)
+		  .addObject("rList", feedService.selectRegionList()) // 지역 카테고리 목록 가져오기
+		  .addObject("sc", sc)
+		  .addObject("keyword", keyword)
+		  .setViewName("feed/mainFeed");
+		
+		return mv;
+	}
+	
 	@RequestMapping(value="list.fd")
-	public String ajaxSelectFeedList(PageInfo pi, String userId, Model model) throws ParseException {
+	public String ajaxSelectFeedList(PageInfo pi, String userId,
+									 SearchCondition sc, String keyword,
+									 Model model) throws ParseException {
 
-		ArrayList<FeedBoard> fbList = feedService.selectFeedList(pi, userId); // 사용자의 피드 목록 가져오기 
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("userId", userId);
+		map.put("regionNo", sc.getRegionNo());
+		map.put("boardType", sc.getBoardType());
+		map.put("keyword", keyword);
+		System.out.println("1:"+sc);
+		ArrayList<FeedBoard> fbList = feedService.selectFeedList(pi, map); // 사용자의 피드 목록 가져오기 
 		for(FeedBoard fb : fbList) {
 			
 			fb.setBoardDate(Time.getDiffTime(fb.getBoardDate())); // 지난 날짜 설정
