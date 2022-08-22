@@ -72,9 +72,12 @@
 		   AND 
 		       BOARD_TYPE = #{boardType} 
 		 </if>
-		 <if test='regionNo != 0'>
+		 <if test='!regionNoList.contains(0)'>
 		   AND 
-		       REGION_NO = #{regionNo} 
+		       REGION_NO IN
+		       <foreach collection="regionNoList" item="regionNo" open="(" close=")" separator=",">
+		       #{regionNo}
+		       </foreach>
 		 </if>
 		   AND
 		       BOARD_CONTENT
@@ -142,9 +145,12 @@
 		   AND 
 		       BOARD_TYPE = #{boardType} 
 		 </if>
-		 <if test='regionNo != "" and regionNo != 0'>
+		 <if test='!regionNoList.isEmpty() and !regionNoList.contains(0)'>
 		   AND 
-		       REGION_NO = #{regionNo} 
+		       REGION_NO IN
+		       <foreach collection="regionNoList" item="regionNo" open="(" close=")" separator=",">
+		       #{regionNo}
+		       </foreach>
 		 </if>
 		   AND
 		       BOARD_CONTENT
@@ -174,6 +180,8 @@
 			   REGION_NAME
 		  FROM 
 		       REGION_CATEGORY
+		 WHERE
+		       REGION_NAME != '전체지역'
 	</select>
 	
 	<insert id="insertGeneralBoard" parameterType="feedBoard">

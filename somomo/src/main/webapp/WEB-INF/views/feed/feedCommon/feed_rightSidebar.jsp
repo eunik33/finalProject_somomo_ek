@@ -14,16 +14,37 @@
     	position: relative;
     	top: 75px;
     	left: 15%;
-    	background-color:rgb(255, 224, 217);
+    	background-color:rgba(248, 230, 226, 0.863);
     	padding : 15px;
     	border-radius: 10px;
 	}
 	.search-area>div{
 		margin-top:10px;
 	}
-	.smallBtn{
-		display:inline-block;
+	.search-region{
+		margin-bottom: 10px;
 	}
+	.search-btn{
+		text-align: right;
+	}
+	.btnPink-sm{
+		/*display:block;*/
+		/*width:100%;*/
+		width: 70px;
+		margin-top: 10px;
+		padding: 5px;
+		background-color: rgb(250,188,186);
+		border: 1px solid rgb(250,188,186);
+		border-radius: 8px;
+		color: white;
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.btnPink-sm:hover{
+		background-color: #FEC8C6;
+		border: 1px solid #FEC8C6;
+	}
+	
 </style>
 </head>
 <body>
@@ -41,31 +62,32 @@
         
         <div class="search-area">
         	<form action="search.fd" method="get">
-	        	<div class="search-region">
-	        		<div><b>검색 지역</b></div>
-		     		<select name="regionNo" class="custom-select" style="width:150px;">
-						<option value="0" selected>전체지역</option>
-							<c:forEach var="r" items="${rList}">
-								<option value="${r.regionNo}">${r.regionName}</option>
-							</c:forEach>
-					</select>
-	        	</div>
+
 	        	<div class="search-boardType">
 	     			<div><b>글 종류</b></div>
-					<input type="radio" id="any" name="boardType" value="A" checked>
-					<label for="any">전체</label>&nbsp;
-					<input type="radio" id="onlyM"name="boardType" value="G">
-					<label for="onlyM">일반글</label>&nbsp;
-					<input type="radio" id="onlyF" name="boardType" value="M">
-					<label for="onlyF">모임모집글</label>
+					<input type="radio" id="btypeA" name="boardType" value="A" checked>
+					<label for="btypeA">전체</label>&nbsp;
+					<input type="radio" id="btypeG"name="boardType" value="G">
+					<label for="btypeG">일반글</label>&nbsp;
+					<input type="radio" id="btypeM" name="boardType" value="M">
+					<label for="btypeM">모임모집글</label>
 	        	</div>
+	        	
+	        	<div class="search-region">
+	        		<div ><b>검색 지역</b></div>
+	        		<input type="checkbox" name="regionNo" value="0" checked>전체지역<br>
+	        		<c:forEach var="t" items="${rList}">
+	        			<input type="checkbox" name="regionNo" value="${t.regionNo}">${t.regionName}
+	        		</c:forEach>
+	        	</div>
+	        	
 	        	<div class="search-keyword">
 	        		<div><b>검색 내용</b></div>
 	        		<input type="text" class="form-control" name="keyword" value="">
 	        	</div>
 	        	
 	        	<div class="search-btn">
-		        	<button type="submit" class="searchBtn btnPink smallBtn" style="text-align:center;">검색</button>
+		        	<button type="submit" class="searchBtn btnPink-sm" style="text-align:center;">검색</button>
 	        	</div>
         	</form>
         	

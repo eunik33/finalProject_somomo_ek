@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -52,19 +53,21 @@ public class FeedController {
 	}
 	
 	@RequestMapping(value="search.fd")
-	public ModelAndView selectSearchFeedList(SearchCondition sc, String keyword, ModelAndView mv)  {
+	public ModelAndView selectSearchFeedList(@RequestParam(value="regionNo") List<Integer> regionNoList,
+									 String boardType, String keyword, ModelAndView mv)  {
 		
 		HashMap<String, Object> map = new HashMap<>();
-		map.put("regionNo", Integer.parseInt(sc.getRegionNo()));
-		map.put("boardType", sc.getBoardType());
+		map.put("boardType", boardType);
+		map.put("regionNoList", regionNoList);
 		map.put("keyword", keyword);
 		
 		PageInfo pi = Pagination.getPageInfoFeed(feedService.selectSearchListCount(map), 1, 5);
 		
 		mv.addObject("pi", pi)
 		  .addObject("rList", feedService.selectRegionList()) // 지역 카테고리 목록 가져오기
-		  .addObject("sc", sc)
-		  .addObject("keyword", keyword)
+		  .addObject("boardType", boardType) // 검색 글 종류
+		  .addObject("regionNoList", regionNoList) // 검색 지역 리스트
+		  .addObject("keyword", keyword) // 검색 키워드 (내용)
 		  .setViewName("feed/mainFeed");
 		
 		return mv;
@@ -72,15 +75,21 @@ public class FeedController {
 	
 	@RequestMapping(value="list.fd")
 	public String ajaxSelectFeedList(PageInfo pi, String userId,
-									 SearchCondition sc, String keyword,
-									 Model model) throws ParseException {
-
+									 @RequestParam(value="regionNo") List<String> searchRegionNo,
+									 String boardType, String keyword, Model model) throws ParseException {
+		
+		List<Integer> regionNoList = new ArrayList<>();
+		if(!searchRegionNo.isEmpty()) {
+			for(String r : searchRegionNo)
+				regionNoList.add(Integer.parseInt(r.replace("[", "").replace("]", "")));
+		}
+		
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("userId", userId);
-		map.put("regionNo", sc.getRegionNo());
-		map.put("boardType", sc.getBoardType());
+		map.put("regionNoList", regionNoList);
+		map.put("boardType", boardType);
 		map.put("keyword", keyword);
-		System.out.println("1:"+sc);
+		
 		ArrayList<FeedBoard> fbList = feedService.selectFeedList(pi, map); // 사용자의 피드 목록 가져오기 
 		for(FeedBoard fb : fbList) {
 			

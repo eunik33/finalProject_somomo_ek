@@ -149,8 +149,8 @@
         				userId : '${loginUser.userId}',
         				currentPage : currentPage,
         				boardLimit : '${pi.boardLimit}',
-        				regionNo : '${sc.regionNo}',
-        				boardType : '${sc.boardType}',
+        				boardType : '${boardType}',
+        				regionNo : '${regionNoList}',
         				keyword : '${keyword}'
         			},
         			success : function(data){
