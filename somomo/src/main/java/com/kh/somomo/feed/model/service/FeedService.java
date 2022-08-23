@@ -29,7 +29,7 @@ public interface FeedService {
 	
 	//------- 글 작성 서비스 -------//
 	// 일반게시글 : 글 + 첨부파일
-	int insertGeneralBoard(FeedBoard fb, ArrayList<Attachment> atList);
+	int insertGeneralBoard(FeedBoard fb, ArrayList<Attachment> fatList);
 	// 모임모집글 : 글 + 채팅방 생성 및 채팅멤버 등록
 	int insertMeetBoard(FeedBoard fb);
 	
@@ -52,13 +52,10 @@ public interface FeedService {
 	int insertChatMember(ChatMember cm);
 	
 	//------- 게시글 수정/삭제 서비스 -------//
-	// 게시글 내용 수정
-	int updateGeneralBoard(FeedBoard fb);
+	// 게시글 수정(일반게시글)
+	int updateGeneralBoard(FeedBoard fb, ArrayList<Integer> deleteFileList, ArrayList<Attachment> newFatList);
+	// 게시글 수정(모임모집글)
 	int updateMeetBoard(FeedBoard fb);
-	// 새 첨부파일 추가
-	int insertNewAttachment(ArrayList<Attachment> atList);
-	// 기존 첨부파일 삭제
-	int deleteAttachment(ArrayList<Attachment> atList);
 	// 게시글 삭제
 	int deleteBoard(int boardNo);
 	// 기존 첨부파일 전체 삭제

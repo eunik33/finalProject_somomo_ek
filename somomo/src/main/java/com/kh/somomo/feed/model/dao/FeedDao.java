@@ -100,19 +100,28 @@ public class FeedDao {
 	public int insertChatMember(SqlSessionTemplate sqlSession, ChatMember cm) {
 		return sqlSession.insert("feedMapper.insertChatMember", cm);
 	}
+
+	public int countOriginFile(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.selectOne("feedMapper.countOriginFile", boardNo);
+	}
+	public int deleteAttachment(SqlSessionTemplate sqlSession, int fileNo) {
+		return sqlSession.delete("feedMapper.deleteAttachment", fileNo);
+	}
+	public int updateGeneralBoard(SqlSessionTemplate sqlSession, FeedBoard fb) {
+		return sqlSession.update("feedMapper.updateGeneralBoard", fb);
+	}
 	
+	public int updateAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+		return sqlSession.update("feedMapper.updateAttachment", at);
+	}
 	
-	// updateGeneralBoard 관련
-	
+	public int insertNewAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+		return sqlSession.insert("feedMapper.insertNewAttachment", at);
+	}
 	
 	public int updateMeetBoard(SqlSessionTemplate sqlSession, FeedBoard fb) {
 		return sqlSession.update("feedMapper.updateMeetBoard", fb);
 	}
-	
-	
-	// insertNewAttachment 관련
-	// deleteAttachment 관련
-	
 	
 	public int deleteBoard(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.update("feedMapper.deleteBoard", boardNo);
@@ -181,9 +190,5 @@ public class FeedDao {
 	public int countLike(SqlSessionTemplate sqlSession, int boardNo) {
 		return sqlSession.selectOne("feedMapper.countLike", boardNo);
 	}
-
-
-
-
 	
 }

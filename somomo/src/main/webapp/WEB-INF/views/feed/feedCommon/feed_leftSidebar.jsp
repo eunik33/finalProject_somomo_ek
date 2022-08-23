@@ -41,43 +41,28 @@
 					</a>
 				</li>
 				<li>
+					<a href="groupRoom.gr" class="community">
+						<i class="uil uil-comments"></i>
+						<span class="link-name">Community</span>
+					</a>
+				</li>
+				<li>
 					<a href="#">
 						<i class="uil uil-user"></i>
 						<span class="link-name">My Page</span>
 					</a>
 				</li>
            		
-				<!-- 나중에 margin으로 조절-->
-				<br><br><br><br>
 				
+				<br><br><br><br><br><br><br>
+				<!-- 로그인 유저 정보 나타내기 -->
 				<li>
-					<a href="#" class="community">
-						<i class="uil uil-comments"></i>
-						<span class="link-name">Community</span>
+					<a href="#" class="loginProfile">
+						<img src="${loginUser.profileImg}">
+						<span class="community-name">${loginUser.nickname}<br>@${loginUser.userId}</span>
 					</a>
 				</li>
 				
-				<!-- 커뮤니티 이름 나타내기 -->
-				<li>
-					<a href="#" class="">
-						<img src="${pageContext.request.contextPath}/resources/img/test1.jpg">
-						<span class="community-name">서핑</span>
-					</a>
-				</li>
-				
-				<li>
-					<a href="#" class="">
-						<img src="${pageContext.request.contextPath}/resources/img/test2.jpg">
-						<span class="community-name">유적 탐사</span>
-					</a>
-				</li>
-				
-				<li>
-					<a href="#" class="">
-						<img src="${pageContext.request.contextPath}/resources/img/test3.jpg">
-						<span class="community-name">자동차</span>
-					</a>
-				</li>
 			</ul>
 		
 			<ul class="logout-mode">
