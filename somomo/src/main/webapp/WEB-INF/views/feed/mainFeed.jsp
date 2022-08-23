@@ -38,7 +38,9 @@
 
 			<div class="search-box">
             	<i class="uil uil-search"></i>
-                <input type="text" placeholder="검색">
+            	<form action="search.fd" method="get">
+                	<input type="text" placeholder="검색" name="keyword">
+                </form>
             </div>
 		</div>
         <!------- 헤더 끝--------->

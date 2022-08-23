@@ -53,8 +53,9 @@ public class FeedController {
 	}
 	
 	@RequestMapping(value="search.fd")
-	public ModelAndView selectSearchFeedList(@RequestParam(value="regionNo") List<Integer> regionNoList,
-									 String boardType, String keyword, ModelAndView mv)  {
+	public ModelAndView selectSearchFeedList(@RequestParam(value="boardType", defaultValue="A") String boardType, 
+			 								 @RequestParam(value="regionNo", defaultValue="0") List<Integer> regionNoList,
+			 								 String keyword, ModelAndView mv)  {
 		
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("boardType", boardType);
