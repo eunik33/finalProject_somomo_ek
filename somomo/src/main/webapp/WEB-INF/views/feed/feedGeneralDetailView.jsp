@@ -95,7 +95,7 @@
 	</style>
 	
 	<!----------- CSS --------------->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.8">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.9">
 	<!----------- 아이콘 CSS 링크 ------->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 	<!----------- 아이콘 CSS 링크 version 2------->
@@ -663,57 +663,54 @@
 							<div class="mdm"><b>내용</b></div>
 							<textarea id="gmContent" name="boardContent" class="form-control" rows="8" placeholder="내용을 입력해주세요" style="resize: none;" required></textarea>
 							
-							<div class="mdm file-area">
-								<div class="grid">
-									<div class="form-wrap">
-										<div class="form-element">
-									      	
-									        <input type="file" name="file1" id="file-1" accept="image/*">
-									        <label for="file-1" id="file-1-preview">
-									        	<img id="preview" src="resources/img/addImage.png" >
-									        </label>
-									     </div>
-									     <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
-									</div>
-									<div class="form-wrap">
-										<div class="form-element">
-									     	
-									        <input type="file" name="file2" id="file-2" accept="image/*">
-									        <label for="file-2" id="file-2-preview">
-									        	<img id="preview" src="resources/img/addImage.png" >
-									        </label>
-									    </div>
-									    <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
-									</div>
-									<div class="form-wrap">
-										<div class="form-element">
-									    	<input type="file" name="file3"  id="file-3" accept="image/*">
-									        <label for="file-3" id="file-3-preview">
-									        	<img id="preview" src="resources/img/addImage.png" >
-									        </label>
-									    </div>
-									    <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
-									</div>
-									<div class="form-wrap">
-										<div class="form-element">
-									    	<input type="file" name="file4" id="file-4" accept="image/*">
-									        <label for="file-4" id="file-4-preview">
-									        	<img id="preview" src="resources/img/addImage.png" >
-									        </label>
-									     </div>
-									     <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
-									</div>
-								    
-								    <!-- 기존 파일 정보 -->
-								    <div class="origin-area" style="display:none;">
-									    <input type="hidden" name="origin" id="origin-1" data-fno="" data-filename="" value="">
-									    <input type="hidden" name="origin" id="origin-2" data-fno="" data-filename="" value="">
-									    <input type="hidden" name="origin" id="origin-3" data-fno="" data-filename="" value="">
-									    <input type="hidden" name="origin" id="origin-4" data-fno="" data-filename="" value="">
+							<div class="grid">
+								<div class="form-wrap">
+									<div class="form-element">
+								      	
+								        <input type="file" name="file1" id="file-1" accept="image/*">
+								        <label for="file-1" id="file-1-preview">
+								        	<img id="preview" src="resources/img/addImage.png" >
+								        </label>
+								     </div>
+								     <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
+								</div>
+								<div class="form-wrap">
+									<div class="form-element">
+								     	
+								        <input type="file" name="file2" id="file-2" accept="image/*">
+								        <label for="file-2" id="file-2-preview">
+								        	<img id="preview" src="resources/img/addImage.png" >
+								        </label>
 								    </div>
-
+								    <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
+								</div>
+								<div class="form-wrap">
+									<div class="form-element">
+								    	<input type="file" name="file3"  id="file-3" accept="image/*">
+								        <label for="file-3" id="file-3-preview">
+								        	<img id="preview" src="resources/img/addImage.png" >
+								        </label>
+								    </div>
+								    <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
+								</div>
+								<div class="form-wrap">
+									<div class="form-element">
+								    	<input type="file" name="file4" id="file-4" accept="image/*">
+								        <label for="file-4" id="file-4-preview">
+								        	<img id="preview" src="resources/img/addImage.png" >
+								        </label>
+								     </div>
+								     <div class="imageRemoveBtn"><i class="uil uil-trash-alt"></i><span>삭제</span></div>
+								</div>
+							    
+							    <!-- 기존 파일 정보 -->
+							    <div class="origin-area" style="display:none;">
+								    <input type="hidden" name="origin" id="origin-1" data-fno="" data-filename="" value="">
+								    <input type="hidden" name="origin" id="origin-2" data-fno="" data-filename="" value="">
+								    <input type="hidden" name="origin" id="origin-3" data-fno="" data-filename="" value="">
+								    <input type="hidden" name="origin" id="origin-4" data-fno="" data-filename="" value="">
 							    </div>
-							</div>
+						    </div>
 							
 							<div style="margin-top:10px;">
 								<button type="button" id="updateGeneralBtn" class="btnPink">글수정</button>
