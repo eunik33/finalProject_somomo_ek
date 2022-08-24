@@ -5,22 +5,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	
-	
-	
-	<style>
-	
+<meta charset="UTF-8">
+<style>
+	/*이미지 슬라이드 관련*/
 	.content {
 		position : relative;
 	}
 	.fade:not(.show) {
-    opacity: 0;
+	   opacity: 0;
 	}
 	.slides {
 	  display: none;
 	}
-
+	
 	.prev,
 	.next {
 	  cursor: pointer;
@@ -35,7 +32,7 @@
 	  transition: 0.6s ease;
 	  border-radius: 0 3px 3px 0;
 	}
-
+	
 	.next {
 	  right: 0px;
 	  border-radius: 3px 0 0 3px;
@@ -89,13 +86,10 @@
 	.fade-1 img{
 	  height : 400px;
 	}
-	
-	
-	
-	</style>
+</style>
 	
 	<!----------- CSS --------------->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.9">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.1.2">
 	<!----------- 아이콘 CSS 링크 ------->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 	<!----------- 아이콘 CSS 링크 version 2------->

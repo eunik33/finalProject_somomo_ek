@@ -30,7 +30,6 @@ import com.kh.somomo.common.template.Pagination;
 import com.kh.somomo.common.template.Time;
 import com.kh.somomo.feed.model.service.FeedService;
 import com.kh.somomo.feed.model.vo.FeedBoard;
-import com.kh.somomo.feed.model.vo.SearchCondition;
 import com.kh.somomo.member.model.vo.Member;
 
 @Controller
@@ -349,14 +348,14 @@ public class FeedController {
 			fb = feedService.selectGeneralBoard(boardNo);
 			model.addAttribute("fb", fb);
 			model.addAttribute("fatList", feedService.selectAttachmentList(boardNo));
-			return "feed/generalBoard";
+			return "feed/feedGeneralBoard";
 			
 		// 모임모집글일 경우
 		} else { 
 			fb = feedService.selectMeetBoard(boardNo);
 			setMeetCondition(fb); // 모집조건 텍스트 설정
 			model.addAttribute("fb", fb);
-			return "feed/ajaxMeetBoard";
+			return "feed/feedMeetBoard";
 		}
 		
 	}	

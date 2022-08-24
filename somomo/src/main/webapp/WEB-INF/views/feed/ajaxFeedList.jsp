@@ -108,7 +108,7 @@
 										<b>모집마감&nbsp;</b>
 									</c:otherwise>
 								</c:choose>
-								${fb.boardTitle}
+								<span class="title">${fb.boardTitle}</span>
 							</div>
 							<div class="meet-info fdm">
 								📆${fb.meetPlace} | ${fb.meetDate}<br>

@@ -6,13 +6,13 @@
 <head>
     <meta charset="UTF-8">
     <!----------- CSS --------------->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.0.9">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.1.2">
     <!----------- 아이콘 CSS 링크 ------->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <!----------- 아이콘 CSS 링크 version 2------->
     <!-- Boxicons CSS -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <!-- 카카오맵 CSS -->
+    <!-- 카카오맵  -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/kakaomap.css">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d76ad31ca1bc9ec945f62ad35d36701c&libraries=services"></script>
 	<!-- jquery -->
@@ -24,18 +24,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>메인 페이지</title>
-    <style>
-	 .left{
-  		width:48%;
-  		float:left;
-  		box-sizing:border-box;
-  	}
-  	.right{
-  		width:48%;
-  		float:right;
-  		box-sizing:border-box;
-  	}
-    </style>
 </head>
 <body>
 
@@ -360,8 +348,7 @@
 					</div>
 								
 					<div class="modal-body">
-					
-						<div class="left">
+						<div class="md-left">
 							<div class="map_wrap">
 							    <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 							
@@ -379,7 +366,7 @@
 							</div>
 						</div>
 						
-						<div class="right">
+						<div class="md-right">
 							<form action="insertM.fd" method="post">
 								<input type="hidden" name="boardWriter" value="${loginUser.userId}">
 								<input type="hidden" name="boardType" value="M">
@@ -403,25 +390,26 @@
 								<input type="datetime-local" id="dateTimeLocal" name="meetDate" class="form-control" required>
 								
 								<div class="md"><b>모임장소</b></div>
-								<input type="text" name="meetPlace" id="meetPlace" class="form-control" placeholder="장소선택" required></textarea>
-								<input type="hidden" name="longitude" id="getx" value="">
-								<input type="hidden" name="latitude" id="gety" value="">
+								<input type="text" name="meetPlace" id="mMeetPlace" class="form-control" placeholder="장소선택" required></textarea>
+								<input type="hidden" name="longitude" id="mapx" value="">
+								<input type="hidden" name="latitude" id="mapy" value="">
 
 								<div class="md"><b>모임인원</b></div>
 								<input type="number" name="meetTotal" min="2" max="10" class="form-control" style="width:120px;" value="2">
 								
 								<div class="md"><b>모집성별</b></div>
-								<select name="meetGender" class="custom-select" style="width:120px;" required>
-									<option value="A" selected>누구나</option>
-									<option value="F">여성만</option>
-									<option value="M">남성만</option>
-								</select>
+								<input type="radio" id="any" name="meetGender" value="A" checked>
+								<label for="any">누구나</label>&nbsp;
+								<input type="radio" id="onlyM"name="meetGender" value="M">
+								<label for="onlyM">남성만</label>&nbsp;
+								<input type="radio" id="onlyF" name="meetGender" value="F">
+								<label for="onlyF">여성만</label>
 						
 								<div class="md"><b>모집나이</b></div>
-								<label for="anyAge">누구나</label>
 								<input type="radio" name="meetAge" id="anyAge" value="A" checked>
-								<label for="selectAge">직접입력</label>
+								<label for="anyAge">누구나</label>&nbsp;
 								<input type="radio" name="meetAge" id="selectAge" value="selectAge">
+								<label for="selectAge">직접입력</label>
 								
 								<div class="row" id="selectAge-area" style="display:none">
 									<div class="col-sm-3">
@@ -433,7 +421,7 @@
 									</div>
 								</div>
 								
-								<div style="margin-top:10px;">
+								<div class="md">
 									<button type="submit" class="btnPink">글작성</button>
 								</div>
 							</form>
@@ -452,6 +440,11 @@
                 $('#dateTimeLocal').attr('min', today);
                 $('#dateTimeLocal').val(today);
            		
+           		// 장소선택칸 클릭하면 카카오맵 검색창으로 focus
+			    $('#mMeetPlace').click(function(){
+			    	$('#keyword').focus();
+			    });
+			    
            		// 모집나이 클릭 이벤트 처리
            		$('input:radio[name=meetAge]').click(function(){
            			if($('input[name=meetAge]:checked').val() == 'selectAge'){ // 모집나이>직접입력 선택했을 경우
@@ -464,10 +457,6 @@
            			}
            		});
            		
-           		// 장소선택칸 클릭하면 카카오맵 검색창으로 focus
-			    $('#meetPlace').click(function(){
-			    	$('#keyword').focus();
-			    })
            		
            		// 최대나이가 입력된 최소나이 이상이 되게끔 처리
 				$('#minAge').on('focus keyup input', function(){
@@ -627,10 +616,10 @@
 		            	지도의 마커 클릭 시 장소명, 위도, 경도 저장
 		            --%>
 		            kakao.maps.event.addListener(marker, 'click', function(mouseEvent) {
-		            	$('#meetPlace').val(title);
-		            	$('#meetPlace').attr('readonly', 'true');
-		            	$('#getx').val(this.getPosition().Ma);
-		            	$('#gety').val(this.getPosition().La);
+		            	$('#mMeetPlace').val(title);
+		            	$('#mMeetPlace').attr('readonly', 'true');
+		            	$('#mapx').val(this.getPosition().Ma);
+		            	$('#mapy').val(this.getPosition().La);
 	                    //console.log(title);
 		                //console.log(this.getPosition().Ma);
 		                //console.log(this.getPosition().La);
