@@ -7,7 +7,7 @@
 <head>
 	<meta charset="UTF-8">
 	<!----------- CSS --------------->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.1.2">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/feedstyle.css?ver=1.1.5">
 	<!----------- 아이콘 CSS 링크 ------->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 	<!----------- 아이콘 CSS 링크 version 2------->
@@ -15,7 +15,7 @@
 	<link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
 	<!-- 카카오맵  -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/kakaomap.css">
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d76ad31ca1bc9ec945f62ad35d36701c&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=자바스크립트키등록필요&libraries=services"></script>
 	<!-- jquery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		
@@ -96,9 +96,7 @@
         	
         	// 채팅방으로 이동
         	function moveChat(){
-        		// 채팅 개발 후 경로 설정 필요
-        		alert('feedMeetDetailView.jsp : 해당 채팅방으로 경로 설정 필요');
-        		location.href = '#';
+        		location.href = 'chat.ch';
         	}
         	
 			// 모임참여 버튼 클릭 시
@@ -142,7 +140,7 @@
 				$('#updateMeetBoardModal').modal('toggle'); // 수정 모당창 띄우기
 				setTimeout(function(){
 					map.relayout();
-					map.setCenter(new kakao.maps.LatLng(37.566826, 126.9786567));	
+					map.setCenter(new kakao.maps.LatLng($('#fb-longitude').val(), $('#fb-latitude').val()));	
 				}, 500);
 			});
                		
@@ -272,8 +270,9 @@
     					$('#mTitle').val(data.boardTitle);
     					$('#mContent').val(data.boardContent);
     					$('#dateTimeLocal').val(data.meetDate.replace(' ', 'T'));
+    					$('#keyword').val(data.meetPlace);
     					$('#mMeetPlace').val(data.meetPlace);
-    					$('#mapx').val(data.logitude);
+    					$('#mapx').val(data.longitude);
     					$('#mapy').val(data.latitude);
     					$('#mMeetTotal').val(data.meetTotal);
     					$('input[name=meetGender][value=' + data.meetGender +']').attr('checked', true);
@@ -352,7 +351,7 @@
 							    <div id="menu_wrap" class="bg_white">
 							        <div class="option">
 							            <div>
-						                   	 키워드 : <input type="text" value="KH종로" id="keyword" size="15"> 
+						                   	 키워드 : <input type="text" value="${fb.meetPlace}" id="keyword" size="15"> 
 						                    <input type="button" id="searchBtn" onclick="searchPlaces()" value="검색">
 							            </div>
 							        </div>
@@ -500,17 +499,18 @@
     
 
     <!------ 오른쪽 사이드 바 --------->
-	<div class="right-sidebar">
-		<%-- 
-		<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
-		포함 시, 게시글 수정/삭제 토클 작동 안 되는 문제 수정 필요
+    <div class="right-sidebar">
+    	<%--
+			<jsp:include page="feedCommon/feed_rightSidebar.jsp" />
+			포함 시, 게시글 수정/삭제 토클 작동 안 되는 문제 수정 필요
 		--%>
-	</div>
+    </div>
     <!-- 오른쪽 사이드 바 끝-->
 
     <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
     <br><br><br><br>
-    <!-- 카카오맵 js-->
+    
+        <!-- 카카오맵 js-->
 	<script>
 		setTimeout(function(){ map.relayout(); }, 0);
 		// 마커를 담을 배열입니다

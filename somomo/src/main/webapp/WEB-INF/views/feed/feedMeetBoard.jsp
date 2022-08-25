@@ -83,6 +83,8 @@
 	</div>
 </div>
 
+<input type="hidden" id="fb-longitude" value="${fb.longitude}">
+<input type="hidden" id="fb-latitude" value="${fb.latitude}">
 
 <script>
 	var markerPosition  = new kakao.maps.LatLng(${fb.longitude}, ${fb.latitude}); 
@@ -97,7 +99,7 @@
 	var meetMapContainer  = document.getElementById('meetMap'), // 이미지 지도를 표시할 div  
 	 meetMapOption = { 
 	     center: markerPosition, // 이미지 지도의 중심좌표
-	     level: 2, // 이미지 지도의 확대 레벨
+	     level: 3, // 이미지 지도의 확대 레벨
 	     marker: marker // 이미지 지도에 표시할 마커 
 	 };    
 	
