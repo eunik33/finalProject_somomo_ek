@@ -20,7 +20,9 @@
 	<nav>
 		<div class="logo-name">
 			<div class="logo-image">
-				<img src="${pageContext.request.contextPath}/resources/img/web_logo.jpg" alt="peach">
+				<a href="main.fd">
+					<img src="${pageContext.request.contextPath}/resources/img/web_logo.jpg" alt="peach">
+				</a>
 			</div>
 			
 			<span class="logo_name">SoMoMo</span>
@@ -35,7 +37,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="chat">
+					<a href="chat.ch">
 						<i class="uil uil-comment"></i>
 						<span class="link-name">CHAT</span>
 					</a>
@@ -47,22 +49,19 @@
 					</a>
 				</li>
 				<li>
-					<a href="#">
+					<a href="myPage.me">
 						<i class="uil uil-user"></i>
 						<span class="link-name">My Page</span>
 					</a>
 				</li>
-           		
 				
-				<br><br><br><br><br><br><br>
 				<!-- 로그인 유저 정보 나타내기 -->
 				<li>
-					<a href="#" class="loginProfile">
+					<a href="javascript:void(0);" class="loginProfile">
 						<img src="${loginUser.profileImg}">
-						<span class="community-name">${loginUser.nickname}<br>@${loginUser.userId}</span>
+						<span class="login-profile">${loginUser.nickname}<br>@${loginUser.userId}</span>
 					</a>
 				</li>
-				
 			</ul>
 		
 			<ul class="logout-mode">
@@ -71,6 +70,16 @@
 						<i class="uil uil-signout"></i>
 						<span class="link-name">Logout</span>
 					</a>
+				</li>
+				
+				<li class="mode">
+						<a href="#">
+							<i class="uil uil-moon"></i>
+							<span class="link-name">Dark Mode</span>
+						</a>
+						<div class="mode-toggle">
+						<span class="switch"></span>
+					</div>
 				</li>
 			</ul>
 		</div>
